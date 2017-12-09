@@ -47,7 +47,7 @@ public class Comunes {
         rs = st.getResultSet();
         configuraciones = new ConfiguracionesTo();
         
-        if (rs.next()) {
+        while (rs.next()) {
             
 //            Datos de la tabla
 //                descripcion VARCHAR(30) NOT NULL,
@@ -58,10 +58,13 @@ public class Comunes {
                        
             switch(descripcion){
                 case DESNOMBREAPP :
+                    
                     configuraciones.setNombreApp(rs.getString("valor"));
+                    LogService.logger.debug(USER, "Nombre APP: "+configuraciones.getNombreApp());
                     break;
                 case DESMAXINTENTOSIS :
                     configuraciones.setMaxIntentos(Integer.parseInt(rs.getString("valor")));
+                    LogService.logger.debug(USER, "Maximos Intentos de Inicio de Sesion: "+configuraciones.getMaxIntentos());
                     break;
                     
             }

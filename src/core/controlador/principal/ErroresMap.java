@@ -7,51 +7,49 @@ package core.controlador.principal;
  *
  * @author Tottus
  */
-public class ErroresdeConexion {
+public class ErroresMap {
 
     
     
-    public static String MessageError(int errorcode,String sqlexception){
+    public static String MessageError(int errorcode,String text){
         String errornombre="";
         switch(errorcode){
-            case 1005 :
-                errornombre="No puedo crear tabla";break;
             case 1011 :    
-                errornombre="Error en el borrado";break;
+               return errornombre="Ha ocurrido un error intentando borrar";
             case 1012 :
                 errornombre="No puedo leer el registro en la tabla del sistema";break;
             case 1020 :    
                 errornombre="El registro ha cambiado desde la ultima lectura de la tabla";break;
             case 1022 :
-                errornombre="No puedo insertar, clave duplicada en la tabla";break;
+                return errornombre="El registro '"+text+"' ya existe";
             case 1032 :    
-                errornombre="No puedo encontrar el registro";break;
+                return errornombre="No se pudo encontrar el registro";
             case 1034 :
                 errornombre="Clave de archivo erronea para la tabla";break;
             case 1035 :    
                 errornombre="Clave de archivo antigua para la tabla; reparelo";break;
             case 1040 :
-                errornombre="Demasiadas conexiones";break;
+                return errornombre="Existen demasiadas conexiones";
             case 1042 :    
                 errornombre="No puedo obtener el nombre de maquina de tu direccion";break;
             case 1043 :
                 errornombre="Protocolo erroneo ";break;
             case 1044:
-                errornombre="Acceso denegado el Usuario no tiene acceso a la base de datos ";break;
+                return errornombre="Acceso denegado el Usuario no tiene acceso a la base de datos ";
             case 1045 :
-                errornombre="Acceso denegado Usuario o Contraseña incorrectos ";break;
+                return errornombre="Acceso denegado Usuario o Contraseña incorrectos ";
             case 1046 :    
-                errornombre="Base de datos no seleccionada ";break;
+                return errornombre="Base de datos no seleccionada ";
             case 1047 :
                 errornombre="Comando desconocido";break;
             case 1048 :    
                 errornombre="La columna no puede ser nula";break;
             case 1049 :
-                errornombre="Base de datos desconocida";break;
+                return errornombre="Base de datos desconocida";
             case 1050 :    
                 errornombre="La tabla ya existe";  break;
             case 1051 :
-                errornombre="Tabla desconocida";break;
+                errornombre="Existe una tabla desconocida";break;
             case 1053 :    
                 errornombre="Desconexion de servidor en proceso";break;
             case 1056 :
@@ -65,7 +63,7 @@ public class ErroresdeConexion {
             case 1061 :
                 errornombre="Nombre de clave duplicado";break;
             case 1062 :    
-                errornombre=" No puedo insertar, Clave Primaria Duplicada";break;
+                return errornombre="El registro '"+text+"' ya existe";
             case 1063 :
                 errornombre="Especificador de columna erroneo para la columna";break;
             case 1065 :    
@@ -79,15 +77,15 @@ public class ErroresdeConexion {
             case 1090 :    
                 errornombre="No puede borrar todos los campos con ALTER TABLE. Usa DROP TABLE para hacerlo";break;
             case 1091 :
-                errornombre="No puedo ELIMINAR. compuebe que el campo/clave existe";break;
+                return errornombre="No se pudo eliminar por favor compruebe que el registro exista";
             case 1104 :    
                 errornombre="El SELECT puede examinar muchos registros y probablemente con mucho tiempo. Verifique tu WHERE y usa SET SQL_BIG_SELECTS=1 si el SELECT esta correcto";break;     
             case 1105 :
-                errornombre="Error desconocido";break;
+                return errornombre="Error desconocido por favor contacte al administrador";
             case 1106 :    
                 errornombre="Procedimiento desconocido";break;
             case 1107 :
-                errornombre=" Equivocado parametro count para procedimiento";break;
+                errornombre="Equivocado parametro count para procedimiento";break;
             case 1108 :    
                 errornombre="Equivocados parametros para procedimiento";break;
             case 1109 :
@@ -139,7 +137,7 @@ public class ErroresdeConexion {
             case 1145 :    
                 errornombre="El argumento para servidor o usuario para GRANT es demasiado grande";break;
             case 1146 :
-                errornombre="Tabla '%s.%s' no existe";break;
+                errornombre="Tabla no existe";break;
             case 1148 :    
                 errornombre="El comando usado no es permitido con esta versión de MySQL";break;
             case 1149 :
@@ -221,7 +219,7 @@ public class ErroresdeConexion {
             case 1360 :    
                 errornombre="El Trigger No Existe";break;
             case 1406 :
-                errornombre="Datos demasiado largos, sobrepasan el numero de caracteres'";break;
+                return errornombre="Existen datos demasiado largos, sobrepasan el número máximo de caracteres'";
             case 2000 :
                 errornombre=" El error desconocido MySQL";break;
             case 2002 :    
@@ -235,10 +233,10 @@ public class ErroresdeConexion {
             case 2052 :    
                 errornombre="La declaración preparada no contiene metadatos";break;
             default :
-                    errornombre=sqlexception; break;
+                    return errornombre="Error desconocido por favor contacte al administrador";
         }
         
-        return errornombre;
+        return "Error Desconocido por favor contacte al administrador - "+errorcode;
     }
     
 }

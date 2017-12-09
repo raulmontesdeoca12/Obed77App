@@ -5,11 +5,14 @@
  */
 package core.controlador.principal;
 
+import core.modelo.helper.Configuraciones;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 
 
@@ -44,5 +47,13 @@ public class Utilidades {
     
     public static Dimension getMinimumDimension(){
         return new Dimension(100,25);
+    }
+    
+    public static void mostrarDialogoInfoCodError(Component parent, int errorCode, String text){
+        JOptionPane.showMessageDialog(parent,ErroresMap.MessageError(errorCode, text),Configuraciones.nombreApp, JOptionPane.INFORMATION_MESSAGE);
+    }
+    
+    public static void mostrarDialogoWarn(Component parent, String mensaje){
+        JOptionPane.showMessageDialog(parent,mensaje,"Error", JOptionPane.WARNING_MESSAGE);
     }
 }

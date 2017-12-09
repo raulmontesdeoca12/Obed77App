@@ -12,9 +12,11 @@ import java.util.ArrayList;
 
 /**
  * Clase que almacena los datos principales del usuario
+ *
  * @author Saito
  */
 public class UsuarioTo {
+
     String user;
     String pass;
     int status;
@@ -22,7 +24,7 @@ public class UsuarioTo {
     EmpleadoTo empleado;
     ArrayList<Roles> roles;
     String ultimaConexion;
-   
+
 
     public EmpleadoTo getEmpleado() {
         return empleado;
@@ -73,56 +75,62 @@ public class UsuarioTo {
     }
 
     public String getUser() {
-        return user;
+        if (user != null) {
+            return user;
+        } else {
+            return "SYS";
+        }
     }
 
     public void setUser(String user) {
         this.user = user;
     }
-    
-    
-    
+
+
+
     /**
      * Valida si el usuario tiene el rol consultado
+     *
      * @param rol
-     * @return 
-     * 
+     *
+     * @return
+     *
      */
-    public boolean isUserInRol(String sRol){
-        
+    public boolean isUserInRol(String sRol) {
+
         ArrayList<String> sRoles = new ArrayList<String>();
-        for(Roles rol : roles){
+        for (Roles rol : roles) {
             sRoles.add(rol.getRoleName());
         }
         return sRoles.contains(sRol);
     }
-    
-    
-    public boolean isMenuVentas(){
+
+
+    public boolean isMenuVentas() {
         return true; //(isUserInRol(Roles.AdminApp));
     }
-    
-    public boolean isMenuProductos(){
+
+    public boolean isMenuProductos() {
         return true; //(isUserInRol(Roles.AdminApp));
     }
-     
-    public boolean isMenuClientes(){
+
+    public boolean isMenuClientes() {
         return true;//(isUserInRol(Roles.AdminApp));
     }
-    
-    public boolean isMenuCompras(){
+
+    public boolean isMenuCompras() {
         return true; //(isUserInRol(Roles.AdminApp));
     }
-    
-    public boolean isMenuProveedores(){
+
+    public boolean isMenuProveedores() {
         return isUserInRol(Roles.ROL_ADMIN) || isUserInRol(Roles.ROL_PROVEEDORES);
     }
-    
-    public boolean isMenuEmpleados(){
+
+    public boolean isMenuEmpleados() {
         return true;//(isUserInRol(Roles.AdminApp));
     }
-     
-    public boolean isMenuConfiguracion(){
+
+    public boolean isMenuConfiguracion() {
         return true;//(isUserInRol(Roles.AdminApp));
     }
 }

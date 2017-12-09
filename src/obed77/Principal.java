@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import obed77.views.producto.PanelCategoria;
+import obed77.views.producto.PanelProductos;
 import org.apache.commons.codec.digest.DigestUtils;
 
 
@@ -70,23 +72,19 @@ public class Principal extends javax.swing.JFrame {
         pProveedores.setVisible(false);
         pEmpleados.setVisible(false);
         pConfiguracion.setVisible(false);
-        
+
         panelHome.setVisible(false);
         txtUser.grabFocus();
         String pass = DigestUtils.md5Hex("*1704Isaac");
-//        HiloIniciando hilo = new HiloIniciando("admin", pass);
-//        hilo.start();
+        HiloIniciando hilo = new HiloIniciando("admin", pass);
+        hilo.start();
 
     }
 
     private void Salir() {
         int opc = JOptionPane.showConfirmDialog(this, "¿Seguro que desea cerrar la aplicación?", "Cerrar", JOptionPane.YES_NO_OPTION, 3);
         if (opc == 0) {
-            String usuario = "SYS";
-            if(getUsuarioPrincipal().getUser()!= null){
-                usuario=getUsuarioPrincipal().getUser();
-            }
-            LogService.logger.info(usuario, "Aplicación Cerrada");
+            LogService.logger.info(getUsuarioPrincipal().getUser(), "Aplicación Cerrada");
             System.exit(0);
         }
     }
@@ -134,9 +132,44 @@ public class Principal extends javax.swing.JFrame {
         }
     }
 
-    private void doCerrarSesion(String user){
+    private void doCerrarSesion(String user) {
         HiloCerrando hilo = new HiloCerrando(user);
         hilo.start();
+    }
+
+
+
+
+    /**
+     * ********************* Metodos para la creación de los paneles *********************
+     */
+
+    public void CrearPanelProducto() {
+        LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelProducto");
+        PanelProductos panel = new PanelProductos();
+        String titulo = "Productos";
+        int index = multiPanel.indexOfTab(titulo);
+        if (index == -1) {
+            multiPanel.addTab(titulo, panel);
+            int i = multiPanel.indexOfTab(titulo);
+            multiPanel.setSelectedIndex(i);
+        } else {
+            JOptionPane.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", 1);
+        }
+    }
+    
+    public void CrearPanelCategorias() {
+        LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelCategorias");
+        PanelCategoria panel = new PanelCategoria();
+        String titulo = "Categorias";
+        int index = multiPanel.indexOfTab(titulo);
+        if (index == -1) {
+            multiPanel.addTab(titulo, panel);
+            int i = multiPanel.indexOfTab(titulo);
+            multiPanel.setSelectedIndex(i);
+        } else {
+            JOptionPane.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", 1);
+        }
     }
 
     /**
@@ -197,6 +230,7 @@ public class Principal extends javax.swing.JFrame {
         jMenuItem4 = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         menuListarProductos = new javax.swing.JMenuItem();
+        menuCategoriasProducto = new javax.swing.JMenuItem();
         menuAgregarProducto = new javax.swing.JMenuItem();
         subMenReportesProductos = new javax.swing.JMenu();
         menuReporte1Productos = new javax.swing.JMenuItem();
@@ -957,7 +991,22 @@ public class Principal extends javax.swing.JFrame {
         menuListarProductos.setMaximumSize(null);
         menuListarProductos.setMinimumSize(new java.awt.Dimension(110, 25));
         menuListarProductos.setPreferredSize(new java.awt.Dimension(110, 25));
+        menuListarProductos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListarProductosActionPerformed(evt);
+            }
+        });
         menuProductos.add(menuListarProductos);
+
+        menuCategoriasProducto.setText("Categorias");
+        menuCategoriasProducto.setMinimumSize(new java.awt.Dimension(110, 25));
+        menuCategoriasProducto.setPreferredSize(new java.awt.Dimension(110, 25));
+        menuCategoriasProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuCategoriasProductoActionPerformed(evt);
+            }
+        });
+        menuProductos.add(menuCategoriasProducto);
 
         menuAgregarProducto.setText("Registrar");
         menuAgregarProducto.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -1710,7 +1759,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(panelContenedorBody, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelTop, javax.swing.GroupLayout.DEFAULT_SIZE, 1055, Short.MAX_VALUE))
+                    .addComponent(panelTop, javax.swing.GroupLayout.DEFAULT_SIZE, 1071, Short.MAX_VALUE))
                 .addGap(5, 5, 5))
         );
         PanelLayout.setVerticalGroup(
@@ -1908,49 +1957,49 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPrincipalProveedoresActionPerformed
 
     private void btnPrincipalProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrincipalProductosActionPerformed
-        // TODO add your handling code here:
+        CrearPanelProducto();
     }//GEN-LAST:event_btnPrincipalProductosActionPerformed
 
     private void menVentasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menVentasMouseClicked
-     if(evt.getButton() == 1){
-        menuVentas.show(menVentas, menVentas.getX(), menVentas.getY());
-    }    // TODO add your handling code here:
+        if (evt.getButton() == 1) {
+            menuVentas.show(menVentas, menVentas.getX(), menVentas.getY());
+        }    // TODO add your handling code here:
     }//GEN-LAST:event_menVentasMouseClicked
 
     private void menProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menProductosMouseClicked
-    if(evt.getButton() == 1){
-        menuProductos.show(menProductos, menProductos.getX(), menProductos.getY());
-    }  // TODO add your handling code here:
+        if (evt.getButton() == 1) {
+            menuProductos.show(menProductos, menProductos.getX(), menProductos.getY());
+        }  // TODO add your handling code here:
     }//GEN-LAST:event_menProductosMouseClicked
 
     private void menClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menClientesMouseClicked
-    if(evt.getButton() == 1){
-        menuClientes.show(menClientes, menClientes.getX(), menClientes.getY());
-    }            // TODO add your handling code here:
+        if (evt.getButton() == 1) {
+            menuClientes.show(menClientes, menClientes.getX(), menClientes.getY());
+        }            // TODO add your handling code here:
     }//GEN-LAST:event_menClientesMouseClicked
 
     private void menProveedoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menProveedoresMouseClicked
-    if(evt.getButton() == 1){
-        menuProveedores.show(menProveedores, menProveedores.getX(), menProveedores.getY());
-    }         // TODO add your handling code here:
+        if (evt.getButton() == 1) {
+            menuProveedores.show(menProveedores, menProveedores.getX(), menProveedores.getY());
+        }         // TODO add your handling code here:
     }//GEN-LAST:event_menProveedoresMouseClicked
 
     private void menEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menEmpleadosMouseClicked
-    if(evt.getButton() == 1){
-        menuEmpleados.show(menEmpleados, menEmpleados.getX(), menEmpleados.getY());
-    }        // TODO add your handling code here:
+        if (evt.getButton() == 1) {
+            menuEmpleados.show(menEmpleados, menEmpleados.getX(), menEmpleados.getY());
+        }        // TODO add your handling code here:
     }//GEN-LAST:event_menEmpleadosMouseClicked
 
     private void menConfiguracionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menConfiguracionMouseClicked
-    if(evt.getButton() == 1){
-        menuConfiguracion.show(menConfiguracion, menConfiguracion.getX(), menConfiguracion.getY());
-    }       // TODO add your handling code here:
+        if (evt.getButton() == 1) {
+            menuConfiguracion.show(menConfiguracion, menConfiguracion.getX(), menConfiguracion.getY());
+        }       // TODO add your handling code here:
     }//GEN-LAST:event_menConfiguracionMouseClicked
 
     private void menComprasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menComprasMouseClicked
-    if(evt.getButton() == 1){
-        menuCompras.show(menCompras, menCompras.getX(), menCompras.getY());
-    }         // TODO add your handling code here:
+        if (evt.getButton() == 1) {
+            menuCompras.show(menCompras, menCompras.getX(), menCompras.getY());
+        }         // TODO add your handling code here:
     }//GEN-LAST:event_menComprasMouseClicked
 
     private void menVentasMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menVentasMouseEntered
@@ -2092,11 +2141,19 @@ public class Principal extends javax.swing.JFrame {
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
         int opc = JOptionPane.showConfirmDialog(this, "¿Seguro que desea cerrar la sesión?", "Cerrar Sesión", JOptionPane.YES_NO_OPTION, 3);
         if (opc == 0) {
-            
+
             LogService.logger.info(getUsuarioPrincipal().getUser(), "Cerrando Cerrada");
-            doCerrarSesion(getUsuarioPrincipal().getUser()); 
+            doCerrarSesion(getUsuarioPrincipal().getUser());
         }       // TODO add your handling code here:
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
+
+    private void menuListarProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListarProductosActionPerformed
+        CrearPanelProducto();        // TODO add your handling code here:
+    }//GEN-LAST:event_menuListarProductosActionPerformed
+
+    private void menuCategoriasProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuCategoriasProductoActionPerformed
+        CrearPanelCategorias();       // TODO add your handling code here:
+    }//GEN-LAST:event_menuCategoriasProductoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2193,6 +2250,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuAgregarEmpleado;
     private javax.swing.JMenuItem menuAgregarProducto;
     private javax.swing.JMenuItem menuAgregarProveedor;
+    private javax.swing.JMenuItem menuCategoriasProducto;
     private javax.swing.JPopupMenu menuClientes;
     private javax.swing.JPopupMenu menuCompras;
     private javax.swing.JMenuItem menuConfig1;
@@ -2224,7 +2282,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuReporte2Proveedores;
     private javax.swing.JMenuItem menuReporte2Ventas;
     private javax.swing.JPopupMenu menuVentas;
-    private javax.swing.JTabbedPane multiPanel;
+    public static javax.swing.JTabbedPane multiPanel;
     public static javax.swing.JPanel pClientes;
     public static javax.swing.JPanel pCompras;
     public static javax.swing.JPanel pConfiguracion;
