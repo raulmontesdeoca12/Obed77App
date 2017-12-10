@@ -136,10 +136,10 @@ public class Principal extends javax.swing.JFrame {
 
     public void CrearPanelProducto() {
         LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelProducto");
-        PanelProductos panel = new PanelProductos();
-        String titulo = "Productos";
+        String titulo = "   Productos   ";
         int index = multiPanel.indexOfTab(titulo);
         if (index == -1) {
+            PanelProductos panel = new PanelProductos();
             multiPanel.addTab(titulo, panel);
             int i = multiPanel.indexOfTab(titulo);
             multiPanel.setSelectedIndex(i);
@@ -150,10 +150,10 @@ public class Principal extends javax.swing.JFrame {
     
     public void CrearPanelCategorias() {
         LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelCategorias");
-        PanelCategoria panel = new PanelCategoria();
-        String titulo = "Categorias";
+        String titulo = "   Categorias   ";
         int index = multiPanel.indexOfTab(titulo);
         if (index == -1) {
+            PanelCategoria panel = new PanelCategoria();
             multiPanel.addTab(titulo, panel);
             int i = multiPanel.indexOfTab(titulo);
             multiPanel.setSelectedIndex(i);
@@ -286,7 +286,7 @@ public class Principal extends javax.swing.JFrame {
         jSeparator8 = new javax.swing.JSeparator();
         panelContenedorBody = new javax.swing.JPanel();
         panelBody = new org.edisoncor.gui.panel.PanelImage();
-        multiPanel = new javax.swing.JTabbedPane();
+        multiPanel = new org.matrix.CustomTabbedPane();
         panelHome = new javax.swing.JPanel();
 
         panelInicial.setMinimumSize(new java.awt.Dimension(800, 60));
@@ -1707,7 +1707,7 @@ public class Principal extends javax.swing.JFrame {
         panelBody.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/FondoApp.jpg"))); // NOI18N
         panelBody.setLayout(new java.awt.BorderLayout());
 
-        multiPanel.setBackground(new java.awt.Color(255, 255, 255));
+        multiPanel.setTabUnselectedColor(new java.awt.Color(245, 245, 245));
 
         panelHome.setOpaque(false);
 
@@ -2271,7 +2271,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuReporte2Proveedores;
     private javax.swing.JMenuItem menuReporte2Ventas;
     private javax.swing.JPopupMenu menuVentas;
-    public static javax.swing.JTabbedPane multiPanel;
+    public static org.matrix.CustomTabbedPane multiPanel;
     public static javax.swing.JPanel pClientes;
     public static javax.swing.JPanel pCompras;
     public static javax.swing.JPanel pConfiguracion;
