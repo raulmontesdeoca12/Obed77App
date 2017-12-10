@@ -6,11 +6,6 @@
 package obed77;
 
 
-import com.sun.awt.AWTUtilities;
-import java.awt.Shape;
-import java.awt.geom.RoundRectangle2D;
-
-
 
 /**
  *
@@ -23,21 +18,15 @@ public class Iniciando extends javax.swing.JFrame {
      */
     public Iniciando() {
         initComponents();
-        decorar();
     }
 
-    private void decorar() {
-        Shape shape = null;
-        shape = new RoundRectangle2D.Float(0, 0, this.getWidth(), this.getHeight(), 20, 20);
-        AWTUtilities.setWindowShape(this, shape);
 
-    }
 
     public void cambiar() {
         L1.setIcon(null);
         L1.setText("Bienvenido");
     }
-    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -57,6 +46,7 @@ public class Iniciando extends javax.swing.JFrame {
         setUndecorated(true);
         setResizable(false);
 
+        panelImage1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
         panelImage1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/FondoGif.png"))); // NOI18N
 
         L1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N

@@ -5,6 +5,7 @@
  */
 package obed77.views.producto;
 
+import core.controlador.principal.ErroresMap;
 import core.controlador.principal.Utilidades;
 import core.controlador.session.CategoriaSession;
 import core.logger.LogService;
@@ -12,8 +13,8 @@ import core.modelo.to.CategoriaTo;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
 import obed77.Principal;
+import obed77.views.dialogosComunes.JOptionDialog;
 
 
 
@@ -41,15 +42,15 @@ public class NuevaCategoria extends javax.swing.JDialog {
             categoria.setDescripcion(txtDescripcion.getText());
             CategoriaSession session = new CategoriaSession();
             session.insertarCategoria(categoria);
-            JOptionPane.showMessageDialog(this, "Categoría creada correctamente", "Nueva Categoría", JOptionPane.INFORMATION_MESSAGE);
+            JOptionDialog.showMessageDialog(this, "Categoría creada correctamente", "Categorías", JOptionDialog.INFORMACION_ICON);
             PanelCategoria.cargar();
             this.dispose();
         } catch (SQLException ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            Utilidades.mostrarDialogoInfoCodError(this, ex.getErrorCode(),categoria.getNombre());
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), categoria.getNombre()), "Categorías", JOptionDialog.INFORMACION_ICON);
         } catch (Exception ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR: "+ex.getMessage());
-             Utilidades.mostrarDialogoInfoCodError(this,9999,null);
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Categorías", JOptionDialog.INFORMACION_ICON);
         }
     }
     /**
@@ -74,11 +75,11 @@ public class NuevaCategoria extends javax.swing.JDialog {
         txtDescripcion = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setLocationByPlatform(true);
         setModal(true);
         setUndecorated(true);
 
         Panel.setBackground(new java.awt.Color(220, 220, 220));
+        Panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
 
         panelTop.setBackground(new java.awt.Color(220, 220, 220));
         panelTop.setPreferredSize(new java.awt.Dimension(701, 25));
@@ -201,17 +202,17 @@ public class NuevaCategoria extends javax.swing.JDialog {
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtNombre)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelImage1Layout.createSequentialGroup()
-                .addContainerGap(80, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(76, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         panelImage1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCancelar, btnCrear});
@@ -227,7 +228,7 @@ public class NuevaCategoria extends javax.swing.JDialog {
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -240,10 +241,10 @@ public class NuevaCategoria extends javax.swing.JDialog {
         Panel.setLayout(PanelLayout);
         PanelLayout.setHorizontalGroup(
             PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelTop, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
+            .addComponent(panelTop, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
             .addGroup(PanelLayout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addComponent(panelImage1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(panelImage1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5))
         );
         PanelLayout.setVerticalGroup(
@@ -259,7 +260,7 @@ public class NuevaCategoria extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

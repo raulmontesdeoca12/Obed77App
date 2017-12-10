@@ -53,9 +53,9 @@ public class CategoriaTo {
 
     public void setEstatusString(String estatus) {
         if (estatus.equals(ACTIVO)) {
-            this.id = 1;
+            this.estatus = 1;
         } else {
-            this.id = 0;
+            this.estatus = 0;
         }
     }
 

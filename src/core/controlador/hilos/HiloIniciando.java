@@ -11,9 +11,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
-import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import obed77.Iniciando;
+import obed77.views.dialogosComunes.JOptionDialog;
 
 
 
@@ -97,10 +97,7 @@ public class HiloIniciando extends Thread {
                         default :
                             mensaje = prop.getProperty("core.inicio.sesion.default");
                     }
-                    JOptionPane.showMessageDialog(e,
-                                                  mensaje,
-                                                  "Información",
-                                                  1);
+                    JOptionDialog.showMessageDialog(e, mensaje,"Información",JOptionDialog.INFORMACION_ICON);
                     e.dispose();
                 }
 

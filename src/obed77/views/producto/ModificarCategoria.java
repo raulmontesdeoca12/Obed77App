@@ -5,6 +5,7 @@
  */
 package obed77.views.producto;
 
+import core.controlador.principal.ErroresMap;
 import core.controlador.principal.Utilidades;
 import core.controlador.session.CategoriaSession;
 import core.logger.LogService;
@@ -12,8 +13,8 @@ import core.modelo.to.CategoriaTo;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
 import obed77.Principal;
+import obed77.views.dialogosComunes.JOptionDialog;
 
 
 
@@ -52,15 +53,15 @@ public class ModificarCategoria extends javax.swing.JDialog {
             categoria.setDescripcion(txtDescripcion.getText());
             CategoriaSession session = new CategoriaSession();
             session.modificarCategoria(categoria);
-            JOptionPane.showMessageDialog(this, "Categoría modificada correctamente", "Modificar Categoría", JOptionPane.INFORMATION_MESSAGE);
+            JOptionDialog.showMessageDialog(this, "Categoría modificada correctamente", "Modificar Categoría", JOptionDialog.INFORMACION_ICON);
             PanelCategoria.cargar();
             this.dispose();
         } catch (SQLException ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            Utilidades.mostrarDialogoInfoCodError(this, ex.getErrorCode(),categoria.getDescripcion());
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), categoria.getDescripcion()),"Error", JOptionDialog.INFORMACION_ICON);
         } catch (Exception ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR: "+ex.getMessage());
-             Utilidades.mostrarDialogoInfoCodError(this,9999,null);
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, ""),"Error", JOptionDialog.INFORMACION_ICON);
         }
     }
     /**
@@ -90,6 +91,7 @@ public class ModificarCategoria extends javax.swing.JDialog {
         setUndecorated(true);
 
         Panel.setBackground(new java.awt.Color(220, 220, 220));
+        Panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
 
         panelTop.setBackground(new java.awt.Color(220, 220, 220));
         panelTop.setPreferredSize(new java.awt.Dimension(701, 25));
@@ -206,22 +208,24 @@ public class ModificarCategoria extends javax.swing.JDialog {
         panelImage1.setLayout(panelImage1Layout);
         panelImage1Layout.setHorizontalGroup(
             panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelImage1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(panelImage1Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtNombre)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(90, 90, 90))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelImage1Layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(panelImage1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtNombre)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
 
         panelImage1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCancelar, btnModificar});
@@ -250,10 +254,10 @@ public class ModificarCategoria extends javax.swing.JDialog {
         Panel.setLayout(PanelLayout);
         PanelLayout.setHorizontalGroup(
             PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelTop, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
+            .addComponent(panelTop, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 307, Short.MAX_VALUE)
             .addGroup(PanelLayout.createSequentialGroup()
                 .addGap(5, 5, 5)
-                .addComponent(panelImage1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(panelImage1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(5, 5, 5))
         );
         PanelLayout.setVerticalGroup(
@@ -269,11 +273,11 @@ public class ModificarCategoria extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(Panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
