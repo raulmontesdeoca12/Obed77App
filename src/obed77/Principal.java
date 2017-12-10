@@ -5,7 +5,6 @@
  */
 package obed77;
 
-import com.sun.awt.AWTUtilities;
 import core.controlador.hilos.HiloCerrando;
 import core.controlador.hilos.HiloIniciando;
 import core.controlador.principal.Utilidades;
@@ -17,14 +16,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.event.KeyEvent;
-import java.awt.geom.RoundRectangle2D;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
-import javax.swing.JOptionPane;
 import javax.swing.border.Border;
+import obed77.views.dialogosComunes.JOptionDialog;
 import obed77.views.producto.PanelCategoria;
 import obed77.views.producto.PanelProductos;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -38,7 +35,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 public class Principal extends javax.swing.JFrame {
 
     public static UsuarioTo usuarioTo = new UsuarioTo();
-    Shape shape = null;
     int x, y;
 
     /**
@@ -55,13 +51,7 @@ public class Principal extends javax.swing.JFrame {
     public static UsuarioTo getUsuarioPrincipal() {
         return usuarioTo;
     }
-
-    private void decorar() {
-        shape = new RoundRectangle2D.Float(0, 0, this.getWidth(), this.getHeight(), 10, 10);
-        AWTUtilities.setWindowShape(this, shape);
-
-    }
-
+    
     private void setConfig() {
         this.setTitle("Principal - " + Configuraciones.nombreApp);
         panelBody.add(panelInicial, BorderLayout.SOUTH, 1);
@@ -82,7 +72,7 @@ public class Principal extends javax.swing.JFrame {
     }
 
     private void Salir() {
-        int opc = JOptionPane.showConfirmDialog(this, "¿Seguro que desea cerrar la aplicación?", "Cerrar", JOptionPane.YES_NO_OPTION, 3);
+        int opc = JOptionDialog.showConfirmDialog(this, "¿Seguro que desea cerrar la aplicación?", "Cerrar", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
             LogService.logger.info(getUsuarioPrincipal().getUser(), "Aplicación Cerrada");
             System.exit(0);
@@ -124,7 +114,7 @@ public class Principal extends javax.swing.JFrame {
 
         if (caracteresIlegales) {
             LogService.logger.error(Comunes.USER, "Uso de Caracteres Ilegales");
-            JOptionPane.showMessageDialog(this, "Error: \n   Uso de Caracteres Ilegales.", "Error", JOptionPane.INFORMATION_MESSAGE);
+            JOptionDialog.showMessageDialog(this, "Error: \n   Uso de Caracteres Ilegales.", "Error", JOptionDialog.INFORMACION_ICON);
         } else {
             LogService.logger.info(Comunes.USER, "Iniciando Sesión");
             HiloIniciando hilo = new HiloIniciando(user, pass);
@@ -154,7 +144,7 @@ public class Principal extends javax.swing.JFrame {
             int i = multiPanel.indexOfTab(titulo);
             multiPanel.setSelectedIndex(i);
         } else {
-            JOptionPane.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", 1);
+            JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
         }
     }
     
@@ -168,7 +158,7 @@ public class Principal extends javax.swing.JFrame {
             int i = multiPanel.indexOfTab(titulo);
             multiPanel.setSelectedIndex(i);
         } else {
-            JOptionPane.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", 1);
+            JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
         }
     }
 
@@ -1316,6 +1306,7 @@ public class Principal extends javax.swing.JFrame {
         setUndecorated(true);
 
         Panel.setBackground(new java.awt.Color(220, 220, 220));
+        Panel.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(153, 153, 153)));
 
         panelTop.setBackground(new java.awt.Color(220, 220, 220));
         panelTop.setPreferredSize(new java.awt.Dimension(701, 25));
@@ -1697,7 +1688,7 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(pEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(pConfiguracion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(301, Short.MAX_VALUE))
+                .addContainerGap(299, Short.MAX_VALUE))
         );
         panelMenuLayout.setVerticalGroup(
             panelMenuLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1724,7 +1715,7 @@ public class Principal extends javax.swing.JFrame {
         panelHome.setLayout(panelHomeLayout);
         panelHomeLayout.setHorizontalGroup(
             panelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 835, Short.MAX_VALUE)
+            .addGap(0, 1064, Short.MAX_VALUE)
         );
         panelHomeLayout.setVerticalGroup(
             panelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1745,7 +1736,7 @@ public class Principal extends javax.swing.JFrame {
         );
         panelContenedorBodyLayout.setVerticalGroup(
             panelContenedorBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 487, Short.MAX_VALUE)
+            .addGap(0, 507, Short.MAX_VALUE)
             .addGroup(panelContenedorBodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addComponent(panelBody, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE))
         );
@@ -1759,7 +1750,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(PanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(panelContenedorBody, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(panelTop, javax.swing.GroupLayout.DEFAULT_SIZE, 1071, Short.MAX_VALUE))
+                    .addComponent(panelTop, javax.swing.GroupLayout.DEFAULT_SIZE, 1069, Short.MAX_VALUE))
                 .addGap(5, 5, 5))
         );
         PanelLayout.setVerticalGroup(
@@ -1830,11 +1821,9 @@ public class Principal extends javax.swing.JFrame {
         if (estado.equals("Maximizar")) {
             this.setExtendedState(this.MAXIMIZED_BOTH);
             btnMaximizar.setToolTipText("Restaurar");
-            decorar();
         } else {
             this.setExtendedState(this.NORMAL);
             btnMaximizar.setToolTipText("Maximizar");
-            decorar();
         }
 
         // TODO add your handling code here:
@@ -2139,10 +2128,10 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInicialSalirMouseExited
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-        int opc = JOptionPane.showConfirmDialog(this, "¿Seguro que desea cerrar la sesión?", "Cerrar Sesión", JOptionPane.YES_NO_OPTION, 3);
+        int opc = JOptionDialog.showConfirmDialog(this, "¿Seguro que desea cerrar la sesión?", "Cerrar Sesión", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
 
-            LogService.logger.info(getUsuarioPrincipal().getUser(), "Cerrando Cerrada");
+            LogService.logger.info(getUsuarioPrincipal().getUser(), "Sesion Cerrada");
             doCerrarSesion(getUsuarioPrincipal().getUser());
         }       // TODO add your handling code here:
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
