@@ -16,6 +16,7 @@ import core.modelo.to.UsuarioTo;
 import java.awt.BorderLayout;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 import obed77.Principal;
 
 
@@ -143,6 +144,7 @@ public class SessionHelper {
         Principal.txtPass.setText("");
         Principal.usuarioTo = user;
         
+        
         //Validamos lso roles y habilitamos los respectivos menus y botones
         //Principal
         Principal.btnPrincipalClientes.setVisible(user.isMenuClientes());
@@ -194,7 +196,10 @@ public class SessionHelper {
     
     
    public void cerrarSesion(){
-       
+        Principal.multiPanel.removeAll();
+        Principal.multiPanel.add(Principal.panelHome);
+        ImageIcon icon = createImageIcon("/Imagenes/icono_home_mini.png");
+        Principal.multiPanel.setIconAt(0, icon);
         Principal.labNombreEmpleado.setText("");
         Principal.labCargo.setText("");
         Principal.labUltimaConexion.setText("");
@@ -261,5 +266,13 @@ public class SessionHelper {
         
         
    }
-
+ protected static ImageIcon createImageIcon(String path) {
+        java.net.URL imgURL = Principal.class.getResource(path);
+        if (imgURL != null) {
+            return new ImageIcon(imgURL);
+        } else {
+            System.err.println("Couldn't find file: " + path);
+            return null;
+        }
+    }
 }

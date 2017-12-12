@@ -3,21 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package obed77.views.producto;
+package obed77.views.proveedor;
 
-import core.controlador.principal.ErroresMap;
-import core.controlador.session.CategoriaSession;
 import core.logger.LogService;
-import core.modelo.to.CategoriaTo;
+import core.modelo.to.ProveedorTo;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Window;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import javax.swing.RowFilter;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableRowSorter;
 import obed77.Principal;
 import obed77.views.dialogosComunes.JOptionDialog;
 
@@ -27,138 +22,139 @@ import obed77.views.dialogosComunes.JOptionDialog;
  *
  * @author Saito
  */
-public class PanelCategoria extends javax.swing.JPanel {
-    static DefaultTableModel tableModelCat;
+public class PanelProveedor extends javax.swing.JPanel {
+    static DefaultTableModel tableModelProv;
     /**
      * Creates new form Panel_Proveedores
      */
-    public PanelCategoria() {
+    public PanelProveedor() {
         initComponents();
         jScrollPane1.setOpaque(false);
         jScrollPane1.getViewport().setOpaque(false);
         cargar();
         inhabilitarBotones();
+        tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     }
 
-    public static void cargar() {
-        try {
-
-            tableModelCat = (DefaultTableModel) tablaCategorias.getModel();
-            //Limpiamos la tabla
-            tableModelCat.setRowCount(0);
-            Object[] fila = new Object[tableModelCat.getColumnCount()];
-            CategoriaSession catSession = new CategoriaSession();
-            ArrayList<CategoriaTo> lista = catSession.getCategorias();
-            for (CategoriaTo cat : lista) {
-                fila[0] = cat.getId();
-                fila[1] = cat.getNombre();
-                fila[2] = cat.getDescripcion();
-                fila[3] = cat.getEstatusString();
-                tableModelCat.addRow(fila);
-            }
-            filtro("");
-        } catch (ClassNotFoundException ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
-            
-            JOptionDialog.showMessageDialog(ErroresMap.MessageError(9999, ""), "Error", JOptionDialog.INFORMACION_ICON);
-        } catch (SQLException ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
-            JOptionDialog.showMessageDialog(ErroresMap.MessageError(9999, ""), "Error", JOptionDialog.INFORMACION_ICON);
-        } catch (Exception ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
-            JOptionDialog.showMessageDialog(ErroresMap.MessageError(9999, ""), "Error", JOptionDialog.INFORMACION_ICON);
-        } finally {
-            tablaCategorias.setModel(tableModelCat);
-        }
+    public static void cargar()
+  {
+    try {
+      tableModelProv = (javax.swing.table.DefaultTableModel)tablaProveedores.getModel();
+      
+      tableModelProv.setRowCount(0);
+      Object[] fila = new Object[tableModelProv.getColumnCount()];
+      core.controlador.session.ProveedorSession provSession = new core.controlador.session.ProveedorSession();
+      java.util.ArrayList<ProveedorTo> lista = provSession.getProveedores();
+      for (ProveedorTo to : lista) {
+        fila[0] = to.getTipoDocumento();
+        fila[1] = to.getDocumento();
+        fila[2] = to.getNombre();
+        fila[3] = to.getContacto();
+        fila[4] = to.getTelefono();
+        fila[5] = to.getCorreo();
+        fila[6] = to.getDireccion();
+        fila[7] = to.getEstatusString();
+        tableModelProv.addRow(fila);
+      }
+      filtro("");
+    } catch (ClassNotFoundException ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+    } catch (java.sql.SQLException ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+    } finally {
+      tablaProveedores.setModel(tableModelProv);
     }
+  }
+  
 
 
 
 
 
-    /**
-     * ************************** Metodos para la interfaz de botones
-     * *************************
-     */
-    private void inhabilitarBotones() {
-        btn_opc_modificar.setEnabled(false);
-        btn_opc_habilitar.setEnabled(false);
-        btn_opc_inhabilitar.setEnabled(false);
+
+
+  private void inhabilitarBotones()
+  {
+    btn_opc_modificar.setEnabled(false);
+    btn_opc_habilitar.setEnabled(false);
+    btn_opc_inhabilitar.setEnabled(false);
+  }
+  
+  private void validarSeleccionFila() {
+    int fsel = tablaProveedores.getSelectedRow();
+    if (fsel != -1) {
+      String estatus = tablaProveedores.getValueAt(fsel, 7).toString();
+      ProveedorTo cat = new ProveedorTo();
+      cat.setEstatusString(estatus);
+      btn_opc_modificar.setEnabled(true);
+      btn_opc_inhabilitar.setEnabled(cat.getEstatus() == 1);
+      btn_opc_habilitar.setEnabled(cat.getEstatus() != 1);
     }
-
-    private void validarSeleccionFila() {
-        int fsel = tablaCategorias.getSelectedRow();
-        if (fsel != -1) {
-            String estatus = tablaCategorias.getValueAt(fsel, 3).toString();
-            CategoriaTo cat = new CategoriaTo();
-            cat.setEstatusString(estatus);
-            btn_opc_modificar.setEnabled(true);
-            btn_opc_inhabilitar.setEnabled(cat.getEstatus() == 1);
-            btn_opc_habilitar.setEnabled(cat.getEstatus() != 1);
-
-        } else {
-            inhabilitarBotones();
-        }
+    else {
+      inhabilitarBotones();
     }
+  }
+  
 
-    /**
-     * ******************************************************************
-     */
-    private void inhabilitarCategoria() {
-        int fsel = tablaCategorias.getSelectedRow();
-        String nombre = tablaCategorias.getValueAt(fsel, 1).toString();
-        try {
-            int estatus = 0;
-            int id = Integer.parseInt(tablaCategorias.getValueAt(fsel, 0).toString());
-            CategoriaTo to = new CategoriaTo();
-            to.setId(id);
-            to.setEstatus(estatus);
-            CategoriaSession session = new CategoriaSession();
-            session.modificarEstatusCategoria(to);
-            JOptionDialog.showMessageDialog("Categoría Inhabilitada Correctamente", "Categorías", JOptionDialog.INFORMACION_ICON);
-            cargar();
-        } catch (SQLException ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
-            JOptionDialog.showMessageDialog(ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", JOptionDialog.INFORMACION_ICON);
-        } catch (Exception ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
-            JOptionDialog.showMessageDialog(ErroresMap.MessageError(9999, ""), "Error", JOptionDialog.INFORMACION_ICON);
-        }
+
+  private void inhabilitarProveedor()
+  {
+    int fsel = tablaProveedores.getSelectedRow();
+    String tipDoc = tablaProveedores.getValueAt(fsel, 0).toString();
+    String doc = tablaProveedores.getValueAt(fsel, 1).toString();
+    String nombre = tablaProveedores.getValueAt(fsel, 2).toString();
+    try {
+      int estatus = 0;
+      ProveedorTo to = new ProveedorTo();
+      to.setTipoDocumento(tipDoc);
+      to.setDocumento(doc);
+      to.setEstatus(estatus);
+      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
+      session.modificarEstatusProveedor(to);
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Inhabilitado Correctamente", "Proveedores", 2);
+      cargar();
+    } catch (java.sql.SQLException ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
+    } catch (Exception ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
     }
-
-    private void habilitarCategoria() {
-        int fsel = tablaCategorias.getSelectedRow();
-        String nombre = tablaCategorias.getValueAt(fsel, 1).toString();
-        try {
-            int estatus = 1;
-            int id = Integer.parseInt(tablaCategorias.getValueAt(fsel, 0).toString());
-            CategoriaTo to = new CategoriaTo();
-            to.setId(id);
-            to.setEstatus(estatus);
-            CategoriaSession session = new CategoriaSession();
-            session.modificarEstatusCategoria(to);
-            JOptionDialog.showMessageDialog("Categoría Habilitada Correctamente", "Categorías", JOptionDialog.INFORMACION_ICON);
-            cargar();
-        } catch (SQLException ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
-            JOptionDialog.showMessageDialog(ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", JOptionDialog.INFORMACION_ICON);
-        } catch (Exception ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
-            JOptionDialog.showMessageDialog(ErroresMap.MessageError(9999, ""), "Error", JOptionDialog.INFORMACION_ICON);
-        }
+  }
+  
+  private void habilitarProveedor() {
+    int fsel = tablaProveedores.getSelectedRow();
+    String tipDoc = tablaProveedores.getValueAt(fsel, 0).toString();
+    String doc = tablaProveedores.getValueAt(fsel, 1).toString();
+    String nombre = tablaProveedores.getValueAt(fsel, 2).toString();
+    try {
+      int estatus = 1;
+      ProveedorTo to = new ProveedorTo();
+      to.setTipoDocumento(tipDoc);
+      to.setDocumento(doc);
+      to.setEstatus(estatus);
+      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
+      session.modificarEstatusProveedor(to);
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Habilitado Correctamente", "Proveedores", 2);
+      cargar();
+    } catch (java.sql.SQLException ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
+    } catch (Exception ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
     }
-
-    private static void filtro(String consulta){
-        try{
-        TableRowSorter<DefaultTableModel> tr = new TableRowSorter<>(tableModelCat);
-        tablaCategorias.setRowSorter(tr);
-        tr.setRowFilter(RowFilter.regexFilter("(?i)"+consulta));
-        }catch (Exception ex){
-            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Error: "+ex.getMessage());
-        }
-        
-        
-}
+  }
+  
+  private static void filtro(String consulta) {
+    javax.swing.table.TableRowSorter<javax.swing.table.DefaultTableModel> tr = new javax.swing.table.TableRowSorter(tableModelProv);
+    tablaProveedores.setRowSorter(tr);
+    tr.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + consulta, new int[0]));
+  }
+  
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -177,7 +173,7 @@ public class PanelCategoria extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaCategorias = new javax.swing.JTable();
+        tablaProveedores = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 204, 204));
         setOpaque(false);
@@ -470,19 +466,19 @@ public class PanelCategoria extends javax.swing.JPanel {
 
         jScrollPane1.setAutoscrolls(true);
 
-        tablaCategorias.setModel(new javax.swing.table.DefaultTableModel(
+        tablaProveedores.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Id", "Nombre", "Descripción", "Estado"
+                "T.Doc", "Documento", "Nombre", "Contacto", "Teléfono", "Correo", "Dirección", "Estadp"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -493,29 +489,35 @@ public class PanelCategoria extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        tablaCategorias.setOpaque(false);
-        tablaCategorias.getTableHeader().setReorderingAllowed(false);
-        tablaCategorias.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaProveedores.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tablaProveedores.setOpaque(false);
+        tablaProveedores.getTableHeader().setReorderingAllowed(false);
+        tablaProveedores.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaCategoriasMouseClicked(evt);
+                tablaProveedoresMouseClicked(evt);
             }
         });
-        tablaCategorias.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        tablaProveedores.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                tablaCategoriasPropertyChange(evt);
+                tablaProveedoresPropertyChange(evt);
             }
         });
-        jScrollPane1.setViewportView(tablaCategorias);
-        if (tablaCategorias.getColumnModel().getColumnCount() > 0) {
-            tablaCategorias.getColumnModel().getColumn(0).setMinWidth(50);
-            tablaCategorias.getColumnModel().getColumn(0).setPreferredWidth(50);
-            tablaCategorias.getColumnModel().getColumn(0).setMaxWidth(50);
-            tablaCategorias.getColumnModel().getColumn(1).setMinWidth(200);
-            tablaCategorias.getColumnModel().getColumn(1).setPreferredWidth(200);
-            tablaCategorias.getColumnModel().getColumn(2).setMinWidth(50);
-            tablaCategorias.getColumnModel().getColumn(3).setMinWidth(120);
-            tablaCategorias.getColumnModel().getColumn(3).setPreferredWidth(120);
-            tablaCategorias.getColumnModel().getColumn(3).setMaxWidth(120);
+        jScrollPane1.setViewportView(tablaProveedores);
+        if (tablaProveedores.getColumnModel().getColumnCount() > 0) {
+            tablaProveedores.getColumnModel().getColumn(0).setMinWidth(50);
+            tablaProveedores.getColumnModel().getColumn(0).setPreferredWidth(50);
+            tablaProveedores.getColumnModel().getColumn(0).setMaxWidth(50);
+            tablaProveedores.getColumnModel().getColumn(1).setMinWidth(100);
+            tablaProveedores.getColumnModel().getColumn(1).setMaxWidth(100);
+            tablaProveedores.getColumnModel().getColumn(2).setMinWidth(200);
+            tablaProveedores.getColumnModel().getColumn(3).setMinWidth(250);
+            tablaProveedores.getColumnModel().getColumn(4).setMinWidth(100);
+            tablaProveedores.getColumnModel().getColumn(4).setMaxWidth(100);
+            tablaProveedores.getColumnModel().getColumn(5).setMinWidth(200);
+            tablaProveedores.getColumnModel().getColumn(5).setMaxWidth(250);
+            tablaProveedores.getColumnModel().getColumn(6).setMinWidth(250);
+            tablaProveedores.getColumnModel().getColumn(7).setMinWidth(60);
+            tablaProveedores.getColumnModel().getColumn(7).setMaxWidth(75);
         }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -569,7 +571,7 @@ public class PanelCategoria extends javax.swing.JPanel {
     private void btn_opc_nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_nuevoActionPerformed
         btn_opc_nuevo.setOpaque(false);
         Window parentWindow = SwingUtilities.windowForComponent(this);
-        NuevaCategoria nuevo = new NuevaCategoria((Frame) parentWindow, true);
+        NuevoProveedor nuevo = new NuevoProveedor((Frame) parentWindow, true);
         nuevo.setVisible(true);
         inhabilitarBotones();
         // TODO add your handling code here:
@@ -626,9 +628,9 @@ public class PanelCategoria extends javax.swing.JPanel {
 
     private void btn_opc_habilitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_habilitarActionPerformed
         btn_opc_habilitar.setOpaque(false);
-        int opc = JOptionDialog.showConfirmDialog("¿Desea habilitar la categoría '" + tablaCategorias.getValueAt(tablaCategorias.getSelectedRow(), 1).toString() + "'?", "Habilitar Categoría", JOptionDialog.SI_NO_OPTION);
+        int opc = JOptionDialog.showConfirmDialog("¿Desea habilitar la categoría '" + tablaProveedores.getValueAt(tablaProveedores.getSelectedRow(), 1).toString() + "'?", "Habilitar Categoría", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
-            habilitarCategoria();
+            habilitarProveedor();
         }
         inhabilitarBotones();// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_habilitarActionPerformed
@@ -658,9 +660,9 @@ public class PanelCategoria extends javax.swing.JPanel {
 
     private void btn_opc_inhabilitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_inhabilitarActionPerformed
         btn_opc_inhabilitar.setOpaque(false);
-        int opc = JOptionDialog.showConfirmDialog("¿Desea inhabilitar la categoría '" + tablaCategorias.getValueAt(tablaCategorias.getSelectedRow(), 1).toString() + "'?", "Inhabilitar Categoría", JOptionDialog.SI_NO_OPTION);
+        int opc = JOptionDialog.showConfirmDialog("¿Desea inhabilitar la categoría '" + tablaProveedores.getValueAt(tablaProveedores.getSelectedRow(), 1).toString() + "'?", "Inhabilitar Categoría", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
-            inhabilitarCategoria();
+            inhabilitarProveedor();
         }
         inhabilitarBotones();
         // TODO add your handling code here:
@@ -686,7 +688,7 @@ public class PanelCategoria extends javax.swing.JPanel {
     private void btn_opc_cerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_cerrarActionPerformed
         int res = JOptionDialog.showConfirmDialog("¿Seguro Que Desea Cerrar Esta Pestaña?", "Cerrar Pestaña", JOptionDialog.SI_NO_OPTION);
         if (res == 0) {
-            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Cerrando Panel Categorias");
+            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Cerrando Panel Proveedores");
             Principal.multiPanel.remove(this);
         }            // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_cerrarActionPerformed
@@ -713,24 +715,24 @@ public class PanelCategoria extends javax.swing.JPanel {
         filtro(txtBuscar.getText());          // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_restaurarActionPerformed
 
-    private void tablaCategoriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaCategoriasMouseClicked
+    private void tablaProveedoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProveedoresMouseClicked
         validarSeleccionFila();        // TODO add your handling code here:
-    }//GEN-LAST:event_tablaCategoriasMouseClicked
+    }//GEN-LAST:event_tablaProveedoresMouseClicked
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
     filtro(txtBuscar.getText());// TODO add your handling code here:
     }//GEN-LAST:event_txtBuscarKeyReleased
 
-    private void tablaCategoriasPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaCategoriasPropertyChange
-    if(tablaCategorias.getSelectedRow() == -1){
+    private void tablaProveedoresPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaProveedoresPropertyChange
+    if(tablaProveedores.getSelectedRow() == -1){
     inhabilitarBotones();
-    }        // TODO add your handling code here:
-    }//GEN-LAST:event_tablaCategoriasPropertyChange
+    }// TODO add your handling code here:
+    }//GEN-LAST:event_tablaProveedoresPropertyChange
 
     private void btn_opc_modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_modificarActionPerformed
         btn_opc_modificar.setOpaque(false);
         Window parentWindow = SwingUtilities.windowForComponent(this);
-        ModificarCategoria nuevo = new ModificarCategoria((Frame) parentWindow, true);
+        ModificarProveedor nuevo = new ModificarProveedor((Frame) parentWindow, true);
         nuevo.setVisible(true);
         inhabilitarBotones();        // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_modificarActionPerformed
@@ -750,7 +752,7 @@ public class PanelCategoria extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pan_opc_6;
-    public static javax.swing.JTable tablaCategorias;
+    public static javax.swing.JTable tablaProveedores;
     private javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
 }

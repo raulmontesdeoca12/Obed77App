@@ -7,8 +7,14 @@ package obed77.views.producto;
 
 import core.logger.LogService;
 import java.awt.Color;
-import javax.swing.JOptionPane;
+import java.awt.Frame;
+import java.awt.Window;
+import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 import obed77.Principal;
+import obed77.views.dialogosComunes.JOptionDialog;
+import obed77.views.proveedor.*;
 
 
 
@@ -16,21 +22,139 @@ import obed77.Principal;
  *
  * @author Saito
  */
-public class PanelProductos extends javax.swing.JPanel {
-
+public class PanelProducto extends javax.swing.JPanel {
+    static DefaultTableModel tableModelProv;
     /**
      * Creates new form Panel_Proveedores
      */
-    public PanelProductos() {
+    public PanelProducto() {
         initComponents();
         jScrollPane1.setOpaque(false);
         jScrollPane1.getViewport().setOpaque(false);
+        cargar();
+        inhabilitarBotones();
+        tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     }
 
-    public void cargar() {
-
+    public static void cargar()
+  {
+    try {
+      tableModelProv = (javax.swing.table.DefaultTableModel)tablaProveedores.getModel();
+      
+      tableModelProv.setRowCount(0);
+      Object[] fila = new Object[tableModelProv.getColumnCount()];
+      core.controlador.session.ProveedorSession provSession = new core.controlador.session.ProveedorSession();
+      java.util.ArrayList<ProveedorTo> lista = provSession.getProveedores();
+      for (ProveedorTo to : lista) {
+        fila[0] = to.getTipoDocumento();
+        fila[1] = to.getDocumento();
+        fila[2] = to.getNombre();
+        fila[3] = to.getContacto();
+        fila[4] = to.getTelefono();
+        fila[5] = to.getCorreo();
+        fila[6] = to.getDireccion();
+        fila[7] = to.getEstatusString();
+        tableModelProv.addRow(fila);
+      }
+      filtro("");
+    } catch (ClassNotFoundException ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+    } catch (java.sql.SQLException ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+    } finally {
+      tablaProveedores.setModel(tableModelProv);
     }
+  }
+  
 
+
+
+
+
+
+
+  private void inhabilitarBotones()
+  {
+    btn_opc_modificar.setEnabled(false);
+    btn_opc_habilitar.setEnabled(false);
+    btn_opc_inhabilitar.setEnabled(false);
+  }
+  
+  private void validarSeleccionFila() {
+    int fsel = tablaProveedores.getSelectedRow();
+    if (fsel != -1) {
+      String estatus = tablaProveedores.getValueAt(fsel, 7).toString();
+      ProveedorTo cat = new ProveedorTo();
+      cat.setEstatusString(estatus);
+      btn_opc_modificar.setEnabled(true);
+      btn_opc_inhabilitar.setEnabled(cat.getEstatus() == 1);
+      btn_opc_habilitar.setEnabled(cat.getEstatus() != 1);
+    }
+    else {
+      inhabilitarBotones();
+    }
+  }
+  
+
+
+  private void inhabilitarProveedor()
+  {
+    int fsel = tablaProveedores.getSelectedRow();
+    String tipDoc = tablaProveedores.getValueAt(fsel, 0).toString();
+    String doc = tablaProveedores.getValueAt(fsel, 1).toString();
+    String nombre = tablaProveedores.getValueAt(fsel, 2).toString();
+    try {
+      int estatus = 0;
+      ProveedorTo to = new ProveedorTo();
+      to.setTipoDocumento(tipDoc);
+      to.setDocumento(doc);
+      to.setEstatus(estatus);
+      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
+      session.modificarEstatusProveedor(to);
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Inhabilitado Correctamente", "Proveedores", 2);
+      cargar();
+    } catch (java.sql.SQLException ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
+    } catch (Exception ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+    }
+  }
+  
+  private void habilitarProveedor() {
+    int fsel = tablaProveedores.getSelectedRow();
+    String tipDoc = tablaProveedores.getValueAt(fsel, 0).toString();
+    String doc = tablaProveedores.getValueAt(fsel, 1).toString();
+    String nombre = tablaProveedores.getValueAt(fsel, 2).toString();
+    try {
+      int estatus = 1;
+      ProveedorTo to = new ProveedorTo();
+      to.setTipoDocumento(tipDoc);
+      to.setDocumento(doc);
+      to.setEstatus(estatus);
+      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
+      session.modificarEstatusProveedor(to);
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Habilitado Correctamente", "Proveedores", 2);
+      cargar();
+    } catch (java.sql.SQLException ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
+    } catch (Exception ex) {
+      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+    }
+  }
+  
+  private static void filtro(String consulta) {
+    javax.swing.table.TableRowSorter<javax.swing.table.DefaultTableModel> tr = new javax.swing.table.TableRowSorter(tableModelProv);
+    tablaProveedores.setRowSorter(tr);
+    tr.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + consulta, new int[0]));
+  }
+  
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -44,12 +168,12 @@ public class PanelProductos extends javax.swing.JPanel {
         btn_opc_inhabilitar = new javax.swing.JButton();
         pan_opc_6 = new javax.swing.JPanel();
         btn_opc_cerrar = new javax.swing.JButton();
-        pan_opc_5 = new javax.swing.JPanel();
+        txtBuscar = new javax.swing.JTextField();
         btn_opc_restaurar = new javax.swing.JButton();
-        txt_buscar = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tabla_proveedores = new javax.swing.JTable();
+        tablaProveedores = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 204, 204));
         setOpaque(false);
@@ -98,6 +222,7 @@ public class PanelProductos extends javax.swing.JPanel {
         btn_opc_modificar.setBorderPainted(false);
         btn_opc_modificar.setContentAreaFilled(false);
         btn_opc_modificar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_opc_modificar.setEnabled(false);
         btn_opc_modificar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_opc_modificar.setIconTextGap(1);
         btn_opc_modificar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -115,6 +240,11 @@ public class PanelProductos extends javax.swing.JPanel {
                 btn_opc_modificarMouseReleased(evt);
             }
         });
+        btn_opc_modificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_opc_modificarActionPerformed(evt);
+            }
+        });
 
         btn_opc_habilitar.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         btn_opc_habilitar.setForeground(new java.awt.Color(255, 255, 255));
@@ -124,6 +254,7 @@ public class PanelProductos extends javax.swing.JPanel {
         btn_opc_habilitar.setBorderPainted(false);
         btn_opc_habilitar.setContentAreaFilled(false);
         btn_opc_habilitar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_opc_habilitar.setEnabled(false);
         btn_opc_habilitar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_opc_habilitar.setIconTextGap(1);
         btn_opc_habilitar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -155,6 +286,7 @@ public class PanelProductos extends javax.swing.JPanel {
         btn_opc_inhabilitar.setBorderPainted(false);
         btn_opc_inhabilitar.setContentAreaFilled(false);
         btn_opc_inhabilitar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btn_opc_inhabilitar.setEnabled(false);
         btn_opc_inhabilitar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btn_opc_inhabilitar.setIconTextGap(1);
         btn_opc_inhabilitar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -198,13 +330,13 @@ public class PanelProductos extends javax.swing.JPanel {
         Panel_Botones_ProveedoresLayout.setVerticalGroup(
             Panel_Botones_ProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_Botones_ProveedoresLayout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(0, 0, 0)
                 .addGroup(Panel_Botones_ProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btn_opc_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_opc_nuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_opc_habilitar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_opc_inhabilitar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGap(0, 0, 0))
         );
 
         Panel_Botones_ProveedoresLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_opc_habilitar, btn_opc_inhabilitar, btn_opc_modificar, btn_opc_nuevo});
@@ -246,22 +378,28 @@ public class PanelProductos extends javax.swing.JPanel {
         pan_opc_6.setLayout(pan_opc_6Layout);
         pan_opc_6Layout.setHorizontalGroup(
             pan_opc_6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btn_opc_cerrar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pan_opc_6Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btn_opc_cerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         pan_opc_6Layout.setVerticalGroup(
             pan_opc_6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pan_opc_6Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btn_opc_cerrar, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(pan_opc_6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btn_opc_cerrar)
+                .addGap(0, 0, 0))
         );
 
-        pan_opc_5.setBackground(new java.awt.Color(229, 232, 232));
-        pan_opc_5.setOpaque(false);
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyReleased(evt);
+            }
+        });
 
         btn_opc_restaurar.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         btn_opc_restaurar.setForeground(new java.awt.Color(255, 255, 255));
         btn_opc_restaurar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_reestablecer_mini.png"))); // NOI18N
-        btn_opc_restaurar.setText("Restaurar");
+        btn_opc_restaurar.setToolTipText("Restaurar Tabla");
         btn_opc_restaurar.setBorderPainted(false);
         btn_opc_restaurar.setContentAreaFilled(false);
         btn_opc_restaurar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -286,16 +424,9 @@ public class PanelProductos extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout pan_opc_5Layout = new javax.swing.GroupLayout(pan_opc_5);
-        pan_opc_5.setLayout(pan_opc_5Layout);
-        pan_opc_5Layout.setHorizontalGroup(
-            pan_opc_5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btn_opc_restaurar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        pan_opc_5Layout.setVerticalGroup(
-            pan_opc_5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btn_opc_restaurar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 22, Short.MAX_VALUE)
-        );
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Buscar:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -304,44 +435,90 @@ public class PanelProductos extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(Panel_Botones_Proveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txt_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pan_opc_5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 343, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_opc_restaurar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addComponent(pan_opc_6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(5, 5, 5))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(pan_opc_6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Panel_Botones_Proveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pan_opc_6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(Panel_Botones_Proveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1))
+                                .addComponent(btn_opc_restaurar))
+                            .addGap(7, 7, 7))))
                 .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txt_buscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pan_opc_5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
         );
 
         jPanel2.setOpaque(false);
 
-        tabla_proveedores.setModel(new javax.swing.table.DefaultTableModel(
+        jScrollPane1.setAutoscrolls(true);
+
+        tablaProveedores.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2"
+                "T.Doc", "Documento", "Nombre", "Contacto", "Teléfono", "Correo", "Dirección", "Estadp"
             }
-        ));
-        tabla_proveedores.setOpaque(false);
-        jScrollPane1.setViewportView(tabla_proveedores);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tablaProveedores.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        tablaProveedores.setOpaque(false);
+        tablaProveedores.getTableHeader().setReorderingAllowed(false);
+        tablaProveedores.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaProveedoresMouseClicked(evt);
+            }
+        });
+        tablaProveedores.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                tablaProveedoresPropertyChange(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tablaProveedores);
+        if (tablaProveedores.getColumnModel().getColumnCount() > 0) {
+            tablaProveedores.getColumnModel().getColumn(0).setMinWidth(50);
+            tablaProveedores.getColumnModel().getColumn(0).setPreferredWidth(50);
+            tablaProveedores.getColumnModel().getColumn(0).setMaxWidth(50);
+            tablaProveedores.getColumnModel().getColumn(1).setMinWidth(100);
+            tablaProveedores.getColumnModel().getColumn(1).setMaxWidth(100);
+            tablaProveedores.getColumnModel().getColumn(2).setMinWidth(200);
+            tablaProveedores.getColumnModel().getColumn(3).setMinWidth(250);
+            tablaProveedores.getColumnModel().getColumn(4).setMinWidth(100);
+            tablaProveedores.getColumnModel().getColumn(4).setMaxWidth(100);
+            tablaProveedores.getColumnModel().getColumn(5).setMinWidth(200);
+            tablaProveedores.getColumnModel().getColumn(5).setMaxWidth(250);
+            tablaProveedores.getColumnModel().getColumn(6).setMinWidth(250);
+            tablaProveedores.getColumnModel().getColumn(7).setMinWidth(60);
+            tablaProveedores.getColumnModel().getColumn(7).setMaxWidth(75);
+        }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -392,24 +569,37 @@ public class PanelProductos extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_opc_nuevoMouseReleased
 
     private void btn_opc_nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_nuevoActionPerformed
+        btn_opc_nuevo.setOpaque(false);
+        Window parentWindow = SwingUtilities.windowForComponent(this);
+        NuevoProveedor nuevo = new NuevoProveedor((Frame) parentWindow, true);
+        nuevo.setVisible(true);
+        inhabilitarBotones();
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_nuevoActionPerformed
 
     private void btn_opc_modificarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_modificarMouseClicked
-        // TODO add your handling code here:
+  
+
+// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_modificarMouseClicked
 
     private void btn_opc_modificarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_modificarMouseEntered
-        btn_opc_modificar.setBackground(new Color(174, 214, 241));
-        btn_opc_modificar.setOpaque(true);   // TODO add your handling code here:
+        if (btn_opc_modificar.isEnabled()) {
+            btn_opc_modificar.setBackground(new Color(174, 214, 241));
+            btn_opc_modificar.setOpaque(true);
+        }// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_modificarMouseEntered
 
     private void btn_opc_modificarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_modificarMouseExited
-        btn_opc_modificar.setOpaque(false); // TODO add your handling code here:
+        if (btn_opc_modificar.isEnabled()) {
+            btn_opc_modificar.setOpaque(false);
+        }// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_modificarMouseExited
 
     private void btn_opc_modificarMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_modificarMouseReleased
-        btn_opc_modificar.setBackground(new Color(174, 214, 241)); // TODO add your handling code here:
+        if (btn_opc_modificar.isEnabled()) {
+            btn_opc_modificar.setBackground(new Color(174, 214, 241));
+        }// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_modificarMouseReleased
 
     private void btn_opc_habilitarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_habilitarMouseClicked
@@ -417,20 +607,32 @@ public class PanelProductos extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_opc_habilitarMouseClicked
 
     private void btn_opc_habilitarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_habilitarMouseEntered
-        btn_opc_habilitar.setBackground(new Color(174, 214, 241));
-        btn_opc_habilitar.setOpaque(true);    // TODO add your handling code here:
+        if (btn_opc_habilitar.isEnabled()) {
+            btn_opc_habilitar.setBackground(new Color(174, 214, 241));
+            btn_opc_habilitar.setOpaque(true);
+        }// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_habilitarMouseEntered
 
     private void btn_opc_habilitarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_habilitarMouseExited
-        btn_opc_habilitar.setOpaque(false);  // TODO add your handling code here:
+        if (btn_opc_habilitar.isEnabled()) {
+            btn_opc_habilitar.setOpaque(false);
+        }// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_habilitarMouseExited
 
     private void btn_opc_habilitarMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_habilitarMouseReleased
-        btn_opc_habilitar.setBackground(new Color(174, 214, 241)); // TODO add your handling code here:
+        if (btn_opc_habilitar.isEnabled()) {
+            btn_opc_habilitar.setBackground(new Color(174, 214, 241));
+        }
+        // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_habilitarMouseReleased
 
     private void btn_opc_habilitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_habilitarActionPerformed
-        // TODO add your handling code here:
+        btn_opc_habilitar.setOpaque(false);
+        int opc = JOptionDialog.showConfirmDialog("¿Desea habilitar la categoría '" + tablaProveedores.getValueAt(tablaProveedores.getSelectedRow(), 1).toString() + "'?", "Habilitar Categoría", JOptionDialog.SI_NO_OPTION);
+        if (opc == 0) {
+            habilitarProveedor();
+        }
+        inhabilitarBotones();// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_habilitarActionPerformed
 
     private void btn_opc_inhabilitarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_inhabilitarMouseClicked
@@ -438,19 +640,31 @@ public class PanelProductos extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_opc_inhabilitarMouseClicked
 
     private void btn_opc_inhabilitarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_inhabilitarMouseEntered
-        btn_opc_inhabilitar.setBackground(new Color(174, 214, 241));
-        btn_opc_inhabilitar.setOpaque(true);     // TODO add your handling code here:
+        if (btn_opc_inhabilitar.isEnabled()) {
+            btn_opc_inhabilitar.setBackground(new Color(174, 214, 241));
+            btn_opc_inhabilitar.setOpaque(true);
+        }// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_inhabilitarMouseEntered
 
     private void btn_opc_inhabilitarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_inhabilitarMouseExited
-        btn_opc_inhabilitar.setOpaque(false);  // TODO add your handling code here:
+        if (btn_opc_inhabilitar.isEnabled()) {
+            btn_opc_inhabilitar.setOpaque(false);
+        }// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_inhabilitarMouseExited
 
     private void btn_opc_inhabilitarMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_opc_inhabilitarMouseReleased
-        btn_opc_inhabilitar.setBackground(new Color(174, 214, 241));  // TODO add your handling code here:
+        if (btn_opc_inhabilitar.isEnabled()) {
+            btn_opc_inhabilitar.setBackground(new Color(174, 214, 241));
+        } // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_inhabilitarMouseReleased
 
     private void btn_opc_inhabilitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_inhabilitarActionPerformed
+        btn_opc_inhabilitar.setOpaque(false);
+        int opc = JOptionDialog.showConfirmDialog("¿Desea inhabilitar la categoría '" + tablaProveedores.getValueAt(tablaProveedores.getSelectedRow(), 1).toString() + "'?", "Inhabilitar Categoría", JOptionDialog.SI_NO_OPTION);
+        if (opc == 0) {
+            inhabilitarProveedor();
+        }
+        inhabilitarBotones();
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_inhabilitarActionPerformed
 
@@ -472,9 +686,9 @@ public class PanelProductos extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_opc_cerrarMouseReleased
 
     private void btn_opc_cerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_cerrarActionPerformed
-        int res = JOptionPane.showConfirmDialog(null, "¿Seguro Que Desea Cerrar Esta Pestaña?", "Cerrar Pestaña", JOptionPane.YES_NO_OPTION);
+        int res = JOptionDialog.showConfirmDialog("¿Seguro Que Desea Cerrar Esta Pestaña?", "Cerrar Pestaña", JOptionDialog.SI_NO_OPTION);
         if (res == 0) {
-            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Cerrando Panel Productos");
+            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Cerrando Panel Proveedores");
             Principal.multiPanel.remove(this);
         }            // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_cerrarActionPerformed
@@ -497,8 +711,31 @@ public class PanelProductos extends javax.swing.JPanel {
     }//GEN-LAST:event_btn_opc_restaurarMouseReleased
 
     private void btn_opc_restaurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_restaurarActionPerformed
-        // TODO add your handling code here:
+        txtBuscar.setText("");
+        filtro(txtBuscar.getText());          // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_restaurarActionPerformed
+
+    private void tablaProveedoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProveedoresMouseClicked
+        validarSeleccionFila();        // TODO add your handling code here:
+    }//GEN-LAST:event_tablaProveedoresMouseClicked
+
+    private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
+    filtro(txtBuscar.getText());// TODO add your handling code here:
+    }//GEN-LAST:event_txtBuscarKeyReleased
+
+    private void tablaProveedoresPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaProveedoresPropertyChange
+    if(tablaProveedores.getSelectedRow() == -1){
+    inhabilitarBotones();
+    }// TODO add your handling code here:
+    }//GEN-LAST:event_tablaProveedoresPropertyChange
+
+    private void btn_opc_modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_modificarActionPerformed
+        btn_opc_modificar.setOpaque(false);
+        Window parentWindow = SwingUtilities.windowForComponent(this);
+        ModificarProveedor nuevo = new ModificarProveedor((Frame) parentWindow, true);
+        nuevo.setVisible(true);
+        inhabilitarBotones();        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_opc_modificarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -510,12 +747,12 @@ public class PanelProductos extends javax.swing.JPanel {
     private javax.swing.JButton btn_opc_nuevo;
     private javax.swing.JButton btn_opc_restaurar;
     private org.jdesktop.swingx.auth.JAASLoginService jAASLoginService1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel pan_opc_5;
     private javax.swing.JPanel pan_opc_6;
-    private javax.swing.JTable tabla_proveedores;
-    private javax.swing.JTextField txt_buscar;
+    public static javax.swing.JTable tablaProveedores;
+    private javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
 }

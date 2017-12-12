@@ -107,7 +107,7 @@ public class UsuarioTo {
 
 
     public boolean isMenuVentas() {
-        return true; //(isUserInRol(Roles.AdminApp));
+        return false; //(isUserInRol(Roles.AdminApp));
     }
 
     public boolean isMenuProductos() {
@@ -115,7 +115,7 @@ public class UsuarioTo {
     }
 
     public boolean isMenuClientes() {
-        return true;//(isUserInRol(Roles.AdminApp));
+        return false;//(isUserInRol(Roles.AdminApp));
     }
 
     public boolean isMenuCompras() {
@@ -127,7 +127,7 @@ public class UsuarioTo {
     }
 
     public boolean isMenuEmpleados() {
-        return true;//(isUserInRol(Roles.AdminApp));
+        return false;//(isUserInRol(Roles.AdminApp));
     }
 
     public boolean isMenuConfiguracion() {

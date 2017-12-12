@@ -23,7 +23,8 @@ import javax.swing.BorderFactory;
 import javax.swing.border.Border;
 import obed77.views.dialogosComunes.JOptionDialog;
 import obed77.views.producto.PanelCategoria;
-import obed77.views.producto.PanelProductos;
+import obed77.views.producto.PanelProducto;
+import obed77.views.proveedor.PanelProveedor;
 import org.apache.commons.codec.digest.DigestUtils;
 
 
@@ -65,14 +66,14 @@ public class Principal extends javax.swing.JFrame {
 
         panelHome.setVisible(false);
         txtUser.grabFocus();
-        String pass = DigestUtils.md5Hex("*1704Isaac");
+        String pass = DigestUtils.md5Hex("*1234Abcd");
         HiloIniciando hilo = new HiloIniciando("admin", pass);
         hilo.start();
 
     }
 
     private void Salir() {
-        int opc = JOptionDialog.showConfirmDialog(this, "¿Seguro que desea cerrar la aplicación?", "Cerrar", JOptionDialog.SI_NO_OPTION);
+        int opc = JOptionDialog.showConfirmDialog(this, "¿Seguro que desea cerrar la aplicación?", "Salir", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
             LogService.logger.info(getUsuarioPrincipal().getUser(), "Aplicación Cerrada");
             System.exit(0);
@@ -127,7 +128,7 @@ public class Principal extends javax.swing.JFrame {
         hilo.start();
     }
 
-
+    
 
 
     /**
@@ -139,7 +140,7 @@ public class Principal extends javax.swing.JFrame {
         String titulo = "   Productos   ";
         int index = multiPanel.indexOfTab(titulo);
         if (index == -1) {
-            PanelProductos panel = new PanelProductos();
+            PanelProducto panel = new PanelProducto();
             multiPanel.addTab(titulo, panel);
             int i = multiPanel.indexOfTab(titulo);
             multiPanel.setSelectedIndex(i);
@@ -154,6 +155,20 @@ public class Principal extends javax.swing.JFrame {
         int index = multiPanel.indexOfTab(titulo);
         if (index == -1) {
             PanelCategoria panel = new PanelCategoria();
+            multiPanel.addTab(titulo, panel);
+            int i = multiPanel.indexOfTab(titulo);
+            multiPanel.setSelectedIndex(i);
+        } else {
+            JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
+        }
+    }
+    
+    public void CrearPanelProveedores() {
+        LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelProveedores");
+        String titulo = "   Proveedores   ";
+        int index = multiPanel.indexOfTab(titulo);
+        if (index == -1) {
+            PanelProveedor panel = new PanelProveedor();
             multiPanel.addTab(titulo, panel);
             int i = multiPanel.indexOfTab(titulo);
             multiPanel.setSelectedIndex(i);
@@ -1167,6 +1182,11 @@ public class Principal extends javax.swing.JFrame {
         menuListarProveedores.setMaximumSize(null);
         menuListarProveedores.setMinimumSize(new java.awt.Dimension(110, 25));
         menuListarProveedores.setPreferredSize(new java.awt.Dimension(110, 25));
+        menuListarProveedores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListarProveedoresActionPerformed(evt);
+            }
+        });
         menuProveedores.add(menuListarProveedores);
 
         menuAgregarProveedor.setText("Registrar");
@@ -1940,9 +1960,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPrincipalClientesActionPerformed
 
     private void btnPrincipalProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrincipalProveedoresActionPerformed
-        //CrearPanelProveedor();
-        //AgregarPanelPrincipal();
-        //men_nulo.setSelected(true);// TODO add your handling code here:
+        CrearPanelProveedores();// TODO add your handling code here:
     }//GEN-LAST:event_btnPrincipalProveedoresActionPerformed
 
     private void btnPrincipalProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrincipalProductosActionPerformed
@@ -2144,6 +2162,10 @@ public class Principal extends javax.swing.JFrame {
         CrearPanelCategorias();       // TODO add your handling code here:
     }//GEN-LAST:event_menuCategoriasProductoActionPerformed
 
+    private void menuListarProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListarProveedoresActionPerformed
+    CrearPanelProveedores();        // TODO add your handling code here:
+    }//GEN-LAST:event_menuListarProveedoresActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -2186,7 +2208,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JButton btnIniciadoSalir;
     private javax.swing.JButton btnInicialSalir;
     public static javax.swing.JButton btnIniciarSesion;
-    private javax.swing.JButton btnMaximizar;
+    public static javax.swing.JButton btnMaximizar;
     private javax.swing.JButton btnMinimizar;
     public static javax.swing.JButton btnPrincipalClientes;
     public static javax.swing.JButton btnPrincipalEmpleados;
