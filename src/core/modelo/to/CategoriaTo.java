@@ -66,4 +66,38 @@ public class CategoriaTo {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
+    
+    @Override
+    public String toString(){
+        return this.nombre;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof CategoriaTo)) {
+            return false;
+        }
+        CategoriaTo categoria = (CategoriaTo) o;
+        if (id != categoria.id) {
+            return false;
+        }
+        if (nombre != null ? !nombre.equals(categoria.nombre) : categoria.nombre != null) {
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (this.nombre != null ? this.nombre.hashCode() : 0);
+        hash = 89 * hash + this.id;
+        return hash;
+    }
 }

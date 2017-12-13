@@ -5,16 +5,16 @@
  */
 package obed77.views.producto;
 
+import core.controlador.session.ProductoSession;
 import core.logger.LogService;
+import core.modelo.to.ProductoTo;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Window;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import obed77.Principal;
 import obed77.views.dialogosComunes.JOptionDialog;
-import obed77.views.proveedor.*;
 
 
 
@@ -23,40 +23,42 @@ import obed77.views.proveedor.*;
  * @author Saito
  */
 public class PanelProducto extends javax.swing.JPanel {
-    static DefaultTableModel tableModelProv;
-    /**
-     * Creates new form Panel_Proveedores
-     */
+    static DefaultTableModel tableModelProd;
+    private static boolean quitadaColumna6Producto;
     public PanelProducto() {
+        quitadaColumna6Producto = false;
         initComponents();
         jScrollPane1.setOpaque(false);
         jScrollPane1.getViewport().setOpaque(false);
         cargar();
         inhabilitarBotones();
-        tablaProveedores.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     }
 
     public static void cargar()
   {
     try {
-      tableModelProv = (javax.swing.table.DefaultTableModel)tablaProveedores.getModel();
+      tableModelProd = (javax.swing.table.DefaultTableModel)tablaProductos.getModel();
       
-      tableModelProv.setRowCount(0);
-      Object[] fila = new Object[tableModelProv.getColumnCount()];
-      core.controlador.session.ProveedorSession provSession = new core.controlador.session.ProveedorSession();
-      java.util.ArrayList<ProveedorTo> lista = provSession.getProveedores();
-      for (ProveedorTo to : lista) {
-        fila[0] = to.getTipoDocumento();
-        fila[1] = to.getDocumento();
-        fila[2] = to.getNombre();
-        fila[3] = to.getContacto();
-        fila[4] = to.getTelefono();
-        fila[5] = to.getCorreo();
-        fila[6] = to.getDireccion();
-        fila[7] = to.getEstatusString();
-        tableModelProv.addRow(fila);
+      tableModelProd.setRowCount(0);
+      Object[] fila = new Object[tableModelProd.getColumnCount()];
+      ProductoSession provSession = new ProductoSession();
+      java.util.ArrayList<ProductoTo> lista = provSession.getProductos();
+      for (ProductoTo to : lista) {
+        fila[0] = to.getCod();
+        fila[1] = to.getNombre();
+        fila[2] = to.getDescripcion();
+        fila[3] = to.getCategoriaString();
+        fila[4] = to.getStock();
+        fila[5] = to.getEstatusString();
+        fila[6] = to.getCategoria();
+        tableModelProd.addRow(fila);
       }
       filtro("");
+      if(!quitadaColumna6Producto){
+          tablaProductos.removeColumn(tablaProductos.getColumnModel().getColumn(6));
+          quitadaColumna6Producto = true;
+      }
+      
     } catch (ClassNotFoundException ex) {
       core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
       
@@ -65,16 +67,10 @@ public class PanelProducto extends javax.swing.JPanel {
       core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
       obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
     } finally {
-      tablaProveedores.setModel(tableModelProv);
+      tablaProductos.setModel(tableModelProd);
     }
   }
   
-
-
-
-
-
-
 
   private void inhabilitarBotones()
   {
@@ -84,10 +80,10 @@ public class PanelProducto extends javax.swing.JPanel {
   }
   
   private void validarSeleccionFila() {
-    int fsel = tablaProveedores.getSelectedRow();
+    int fsel = tablaProductos.getSelectedRow();
     if (fsel != -1) {
-      String estatus = tablaProveedores.getValueAt(fsel, 7).toString();
-      ProveedorTo cat = new ProveedorTo();
+      String estatus = tablaProductos.getValueAt(fsel, 5).toString();
+      ProductoTo cat = new ProductoTo();
       cat.setEstatusString(estatus);
       btn_opc_modificar.setEnabled(true);
       btn_opc_inhabilitar.setEnabled(cat.getEstatus() == 1);
@@ -100,21 +96,19 @@ public class PanelProducto extends javax.swing.JPanel {
   
 
 
-  private void inhabilitarProveedor()
+  private void inhabilitarProducto()
   {
-    int fsel = tablaProveedores.getSelectedRow();
-    String tipDoc = tablaProveedores.getValueAt(fsel, 0).toString();
-    String doc = tablaProveedores.getValueAt(fsel, 1).toString();
-    String nombre = tablaProveedores.getValueAt(fsel, 2).toString();
+    int fsel = tablaProductos.getSelectedRow();
+    long cod = Long.valueOf(tablaProductos.getValueAt(fsel, 0).toString());
+    String nombre = tablaProductos.getValueAt(fsel, 1).toString();
     try {
       int estatus = 0;
-      ProveedorTo to = new ProveedorTo();
-      to.setTipoDocumento(tipDoc);
-      to.setDocumento(doc);
+      ProductoTo to = new ProductoTo();
+      to.setCod(cod);
       to.setEstatus(estatus);
-      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
-      session.modificarEstatusProveedor(to);
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Inhabilitado Correctamente", "Proveedores", 2);
+      ProductoSession session = new ProductoSession();
+      session.modificarEstatusProducto(to);
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Producto Inhabilitado Correctamente", "Productos",JOptionDialog.INFORMACION_ICON);
       cargar();
     } catch (java.sql.SQLException ex) {
       core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
@@ -125,20 +119,18 @@ public class PanelProducto extends javax.swing.JPanel {
     }
   }
   
-  private void habilitarProveedor() {
-    int fsel = tablaProveedores.getSelectedRow();
-    String tipDoc = tablaProveedores.getValueAt(fsel, 0).toString();
-    String doc = tablaProveedores.getValueAt(fsel, 1).toString();
-    String nombre = tablaProveedores.getValueAt(fsel, 2).toString();
+  private void habilitarProducto() {
+    int fsel = tablaProductos.getSelectedRow();
+    long cod = Long.valueOf(tablaProductos.getValueAt(fsel, 0).toString());
+    String nombre = tablaProductos.getValueAt(fsel, 1).toString();
     try {
       int estatus = 1;
-      ProveedorTo to = new ProveedorTo();
-      to.setTipoDocumento(tipDoc);
-      to.setDocumento(doc);
+      ProductoTo to = new ProductoTo();
+      to.setCod(cod);
       to.setEstatus(estatus);
-      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
-      session.modificarEstatusProveedor(to);
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Habilitado Correctamente", "Proveedores", 2);
+      ProductoSession session = new ProductoSession();
+      session.modificarEstatusProducto(to);
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Producto Habilitado Correctamente", "Productos", 2);
       cargar();
     } catch (java.sql.SQLException ex) {
       core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
@@ -150,8 +142,8 @@ public class PanelProducto extends javax.swing.JPanel {
   }
   
   private static void filtro(String consulta) {
-    javax.swing.table.TableRowSorter<javax.swing.table.DefaultTableModel> tr = new javax.swing.table.TableRowSorter(tableModelProv);
-    tablaProveedores.setRowSorter(tr);
+    javax.swing.table.TableRowSorter<javax.swing.table.DefaultTableModel> tr = new javax.swing.table.TableRowSorter(tableModelProd);
+    tablaProductos.setRowSorter(tr);
     tr.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + consulta, new int[0]));
   }
   
@@ -161,7 +153,7 @@ public class PanelProducto extends javax.swing.JPanel {
 
         jAASLoginService1 = new org.jdesktop.swingx.auth.JAASLoginService();
         jPanel1 = new javax.swing.JPanel();
-        Panel_Botones_Proveedores = new javax.swing.JPanel();
+        Panel_Botones = new javax.swing.JPanel();
         btn_opc_nuevo = new javax.swing.JButton();
         btn_opc_modificar = new javax.swing.JButton();
         btn_opc_habilitar = new javax.swing.JButton();
@@ -173,15 +165,15 @@ public class PanelProducto extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaProveedores = new javax.swing.JTable();
+        tablaProductos = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 204, 204));
         setOpaque(false);
 
         jPanel1.setOpaque(false);
 
-        Panel_Botones_Proveedores.setBackground(new java.awt.Color(229, 232, 232));
-        Panel_Botones_Proveedores.setOpaque(false);
+        Panel_Botones.setBackground(new java.awt.Color(229, 232, 232));
+        Panel_Botones.setOpaque(false);
 
         btn_opc_nuevo.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         btn_opc_nuevo.setForeground(new java.awt.Color(255, 255, 255));
@@ -310,11 +302,11 @@ public class PanelProducto extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout Panel_Botones_ProveedoresLayout = new javax.swing.GroupLayout(Panel_Botones_Proveedores);
-        Panel_Botones_Proveedores.setLayout(Panel_Botones_ProveedoresLayout);
-        Panel_Botones_ProveedoresLayout.setHorizontalGroup(
-            Panel_Botones_ProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(Panel_Botones_ProveedoresLayout.createSequentialGroup()
+        javax.swing.GroupLayout Panel_BotonesLayout = new javax.swing.GroupLayout(Panel_Botones);
+        Panel_Botones.setLayout(Panel_BotonesLayout);
+        Panel_BotonesLayout.setHorizontalGroup(
+            Panel_BotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_BotonesLayout.createSequentialGroup()
                 .addComponent(btn_opc_nuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btn_opc_modificar)
@@ -325,13 +317,13 @@ public class PanelProducto extends javax.swing.JPanel {
                 .addGap(25, 25, 25))
         );
 
-        Panel_Botones_ProveedoresLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btn_opc_habilitar, btn_opc_inhabilitar, btn_opc_modificar, btn_opc_nuevo});
+        Panel_BotonesLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btn_opc_habilitar, btn_opc_inhabilitar, btn_opc_modificar, btn_opc_nuevo});
 
-        Panel_Botones_ProveedoresLayout.setVerticalGroup(
-            Panel_Botones_ProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_Botones_ProveedoresLayout.createSequentialGroup()
+        Panel_BotonesLayout.setVerticalGroup(
+            Panel_BotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_BotonesLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addGroup(Panel_Botones_ProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(Panel_BotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btn_opc_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_opc_nuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_opc_habilitar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -339,7 +331,7 @@ public class PanelProducto extends javax.swing.JPanel {
                 .addGap(0, 0, 0))
         );
 
-        Panel_Botones_ProveedoresLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_opc_habilitar, btn_opc_inhabilitar, btn_opc_modificar, btn_opc_nuevo});
+        Panel_BotonesLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_opc_habilitar, btn_opc_inhabilitar, btn_opc_modificar, btn_opc_nuevo});
 
         pan_opc_6.setBackground(new java.awt.Color(229, 232, 232));
         pan_opc_6.setOpaque(false);
@@ -434,7 +426,7 @@ public class PanelProducto extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Panel_Botones_Proveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Panel_Botones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -451,7 +443,7 @@ public class PanelProducto extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pan_opc_6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(Panel_Botones_Proveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Panel_Botones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -466,19 +458,19 @@ public class PanelProducto extends javax.swing.JPanel {
 
         jScrollPane1.setAutoscrolls(true);
 
-        tablaProveedores.setModel(new javax.swing.table.DefaultTableModel(
+        tablaProductos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "T.Doc", "Documento", "Nombre", "Contacto", "Teléfono", "Correo", "Dirección", "Estadp"
+                "Código", "Nombre", "Descripción", "Categoría", "Stock", "Estado", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Long.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -489,35 +481,31 @@ public class PanelProducto extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        tablaProveedores.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        tablaProveedores.setOpaque(false);
-        tablaProveedores.getTableHeader().setReorderingAllowed(false);
-        tablaProveedores.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaProductos.setOpaque(false);
+        tablaProductos.getTableHeader().setReorderingAllowed(false);
+        tablaProductos.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaProveedoresMouseClicked(evt);
+                tablaProductosMouseClicked(evt);
             }
         });
-        tablaProveedores.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        tablaProductos.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                tablaProveedoresPropertyChange(evt);
+                tablaProductosPropertyChange(evt);
             }
         });
-        jScrollPane1.setViewportView(tablaProveedores);
-        if (tablaProveedores.getColumnModel().getColumnCount() > 0) {
-            tablaProveedores.getColumnModel().getColumn(0).setMinWidth(50);
-            tablaProveedores.getColumnModel().getColumn(0).setPreferredWidth(50);
-            tablaProveedores.getColumnModel().getColumn(0).setMaxWidth(50);
-            tablaProveedores.getColumnModel().getColumn(1).setMinWidth(100);
-            tablaProveedores.getColumnModel().getColumn(1).setMaxWidth(100);
-            tablaProveedores.getColumnModel().getColumn(2).setMinWidth(200);
-            tablaProveedores.getColumnModel().getColumn(3).setMinWidth(250);
-            tablaProveedores.getColumnModel().getColumn(4).setMinWidth(100);
-            tablaProveedores.getColumnModel().getColumn(4).setMaxWidth(100);
-            tablaProveedores.getColumnModel().getColumn(5).setMinWidth(200);
-            tablaProveedores.getColumnModel().getColumn(5).setMaxWidth(250);
-            tablaProveedores.getColumnModel().getColumn(6).setMinWidth(250);
-            tablaProveedores.getColumnModel().getColumn(7).setMinWidth(60);
-            tablaProveedores.getColumnModel().getColumn(7).setMaxWidth(75);
+        jScrollPane1.setViewportView(tablaProductos);
+        if (tablaProductos.getColumnModel().getColumnCount() > 0) {
+            tablaProductos.getColumnModel().getColumn(0).setMinWidth(100);
+            tablaProductos.getColumnModel().getColumn(0).setMaxWidth(150);
+            tablaProductos.getColumnModel().getColumn(1).setMinWidth(150);
+            tablaProductos.getColumnModel().getColumn(2).setMinWidth(150);
+            tablaProductos.getColumnModel().getColumn(3).setMinWidth(100);
+            tablaProductos.getColumnModel().getColumn(4).setMinWidth(50);
+            tablaProductos.getColumnModel().getColumn(4).setMaxWidth(50);
+            tablaProductos.getColumnModel().getColumn(5).setMinWidth(60);
+            tablaProductos.getColumnModel().getColumn(5).setMaxWidth(75);
+            tablaProductos.getColumnModel().getColumn(6).setResizable(false);
+            tablaProductos.getColumnModel().getColumn(6).setPreferredWidth(0);
         }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -571,7 +559,7 @@ public class PanelProducto extends javax.swing.JPanel {
     private void btn_opc_nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_nuevoActionPerformed
         btn_opc_nuevo.setOpaque(false);
         Window parentWindow = SwingUtilities.windowForComponent(this);
-        NuevoProveedor nuevo = new NuevoProveedor((Frame) parentWindow, true);
+        NuevoProducto nuevo = new NuevoProducto((Frame) parentWindow, true);
         nuevo.setVisible(true);
         inhabilitarBotones();
         // TODO add your handling code here:
@@ -628,9 +616,9 @@ public class PanelProducto extends javax.swing.JPanel {
 
     private void btn_opc_habilitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_habilitarActionPerformed
         btn_opc_habilitar.setOpaque(false);
-        int opc = JOptionDialog.showConfirmDialog("¿Desea habilitar la categoría '" + tablaProveedores.getValueAt(tablaProveedores.getSelectedRow(), 1).toString() + "'?", "Habilitar Categoría", JOptionDialog.SI_NO_OPTION);
+        int opc = JOptionDialog.showConfirmDialog("¿Desea habilitar el producto '" + tablaProductos.getValueAt(tablaProductos.getSelectedRow(), 1).toString() + "'?", "Habilitar Producto", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
-            habilitarProveedor();
+            habilitarProducto();
         }
         inhabilitarBotones();// TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_habilitarActionPerformed
@@ -660,9 +648,9 @@ public class PanelProducto extends javax.swing.JPanel {
 
     private void btn_opc_inhabilitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_inhabilitarActionPerformed
         btn_opc_inhabilitar.setOpaque(false);
-        int opc = JOptionDialog.showConfirmDialog("¿Desea inhabilitar la categoría '" + tablaProveedores.getValueAt(tablaProveedores.getSelectedRow(), 1).toString() + "'?", "Inhabilitar Categoría", JOptionDialog.SI_NO_OPTION);
+        int opc = JOptionDialog.showConfirmDialog("¿Desea inhabilitar el producto '" + tablaProductos.getValueAt(tablaProductos.getSelectedRow(), 1).toString() + "'?", "Inhabilitar Producto", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
-            inhabilitarProveedor();
+            inhabilitarProducto();
         }
         inhabilitarBotones();
         // TODO add your handling code here:
@@ -688,7 +676,7 @@ public class PanelProducto extends javax.swing.JPanel {
     private void btn_opc_cerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_cerrarActionPerformed
         int res = JOptionDialog.showConfirmDialog("¿Seguro Que Desea Cerrar Esta Pestaña?", "Cerrar Pestaña", JOptionDialog.SI_NO_OPTION);
         if (res == 0) {
-            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Cerrando Panel Proveedores");
+            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Cerrando Panel Productos");
             Principal.multiPanel.remove(this);
         }            // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_cerrarActionPerformed
@@ -715,31 +703,31 @@ public class PanelProducto extends javax.swing.JPanel {
         filtro(txtBuscar.getText());          // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_restaurarActionPerformed
 
-    private void tablaProveedoresMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProveedoresMouseClicked
+    private void tablaProductosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosMouseClicked
         validarSeleccionFila();        // TODO add your handling code here:
-    }//GEN-LAST:event_tablaProveedoresMouseClicked
+    }//GEN-LAST:event_tablaProductosMouseClicked
 
     private void txtBuscarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyReleased
     filtro(txtBuscar.getText());// TODO add your handling code here:
     }//GEN-LAST:event_txtBuscarKeyReleased
 
-    private void tablaProveedoresPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaProveedoresPropertyChange
-    if(tablaProveedores.getSelectedRow() == -1){
+    private void tablaProductosPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaProductosPropertyChange
+    if(tablaProductos.getSelectedRow() == -1){
     inhabilitarBotones();
     }// TODO add your handling code here:
-    }//GEN-LAST:event_tablaProveedoresPropertyChange
+    }//GEN-LAST:event_tablaProductosPropertyChange
 
     private void btn_opc_modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_modificarActionPerformed
         btn_opc_modificar.setOpaque(false);
         Window parentWindow = SwingUtilities.windowForComponent(this);
-        ModificarProveedor nuevo = new ModificarProveedor((Frame) parentWindow, true);
+        ModificarProducto nuevo = new ModificarProducto((Frame) parentWindow, true);
         nuevo.setVisible(true);
         inhabilitarBotones();        // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_modificarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel Panel_Botones_Proveedores;
+    private javax.swing.JPanel Panel_Botones;
     private javax.swing.JButton btn_opc_cerrar;
     private javax.swing.JButton btn_opc_habilitar;
     private javax.swing.JButton btn_opc_inhabilitar;
@@ -752,7 +740,7 @@ public class PanelProducto extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pan_opc_6;
-    public static javax.swing.JTable tablaProveedores;
+    public static javax.swing.JTable tablaProductos;
     private javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
 }

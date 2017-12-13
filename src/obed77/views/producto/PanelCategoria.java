@@ -29,9 +29,6 @@ import obed77.views.dialogosComunes.JOptionDialog;
  */
 public class PanelCategoria extends javax.swing.JPanel {
     static DefaultTableModel tableModelCat;
-    /**
-     * Creates new form Panel_Proveedores
-     */
     public PanelCategoria() {
         initComponents();
         jScrollPane1.setOpaque(false);
@@ -165,7 +162,7 @@ public class PanelCategoria extends javax.swing.JPanel {
 
         jAASLoginService1 = new org.jdesktop.swingx.auth.JAASLoginService();
         jPanel1 = new javax.swing.JPanel();
-        Panel_Botones_Proveedores = new javax.swing.JPanel();
+        Panel_Botones = new javax.swing.JPanel();
         btn_opc_nuevo = new javax.swing.JButton();
         btn_opc_modificar = new javax.swing.JButton();
         btn_opc_habilitar = new javax.swing.JButton();
@@ -184,8 +181,8 @@ public class PanelCategoria extends javax.swing.JPanel {
 
         jPanel1.setOpaque(false);
 
-        Panel_Botones_Proveedores.setBackground(new java.awt.Color(229, 232, 232));
-        Panel_Botones_Proveedores.setOpaque(false);
+        Panel_Botones.setBackground(new java.awt.Color(229, 232, 232));
+        Panel_Botones.setOpaque(false);
 
         btn_opc_nuevo.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         btn_opc_nuevo.setForeground(new java.awt.Color(255, 255, 255));
@@ -314,11 +311,11 @@ public class PanelCategoria extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout Panel_Botones_ProveedoresLayout = new javax.swing.GroupLayout(Panel_Botones_Proveedores);
-        Panel_Botones_Proveedores.setLayout(Panel_Botones_ProveedoresLayout);
-        Panel_Botones_ProveedoresLayout.setHorizontalGroup(
-            Panel_Botones_ProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(Panel_Botones_ProveedoresLayout.createSequentialGroup()
+        javax.swing.GroupLayout Panel_BotonesLayout = new javax.swing.GroupLayout(Panel_Botones);
+        Panel_Botones.setLayout(Panel_BotonesLayout);
+        Panel_BotonesLayout.setHorizontalGroup(
+            Panel_BotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(Panel_BotonesLayout.createSequentialGroup()
                 .addComponent(btn_opc_nuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btn_opc_modificar)
@@ -329,13 +326,13 @@ public class PanelCategoria extends javax.swing.JPanel {
                 .addGap(25, 25, 25))
         );
 
-        Panel_Botones_ProveedoresLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btn_opc_habilitar, btn_opc_inhabilitar, btn_opc_modificar, btn_opc_nuevo});
+        Panel_BotonesLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btn_opc_habilitar, btn_opc_inhabilitar, btn_opc_modificar, btn_opc_nuevo});
 
-        Panel_Botones_ProveedoresLayout.setVerticalGroup(
-            Panel_Botones_ProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_Botones_ProveedoresLayout.createSequentialGroup()
+        Panel_BotonesLayout.setVerticalGroup(
+            Panel_BotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, Panel_BotonesLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addGroup(Panel_Botones_ProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(Panel_BotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btn_opc_modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_opc_nuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_opc_habilitar, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -343,7 +340,7 @@ public class PanelCategoria extends javax.swing.JPanel {
                 .addGap(0, 0, 0))
         );
 
-        Panel_Botones_ProveedoresLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_opc_habilitar, btn_opc_inhabilitar, btn_opc_modificar, btn_opc_nuevo});
+        Panel_BotonesLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btn_opc_habilitar, btn_opc_inhabilitar, btn_opc_modificar, btn_opc_nuevo});
 
         pan_opc_6.setBackground(new java.awt.Color(229, 232, 232));
         pan_opc_6.setOpaque(false);
@@ -438,7 +435,7 @@ public class PanelCategoria extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(Panel_Botones_Proveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(Panel_Botones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -455,7 +452,7 @@ public class PanelCategoria extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pan_opc_6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(Panel_Botones_Proveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(Panel_Botones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(jPanel1Layout.createSequentialGroup()
                             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -737,7 +734,7 @@ public class PanelCategoria extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel Panel_Botones_Proveedores;
+    private javax.swing.JPanel Panel_Botones;
     private javax.swing.JButton btn_opc_cerrar;
     private javax.swing.JButton btn_opc_habilitar;
     private javax.swing.JButton btn_opc_inhabilitar;
