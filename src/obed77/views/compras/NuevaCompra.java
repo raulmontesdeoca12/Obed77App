@@ -10,6 +10,7 @@ import core.controlador.principal.Utilidades;
 import core.controlador.session.ProductoSession;
 import core.logger.LogService;
 import core.modelo.to.CategoriaTo;
+import core.modelo.to.DetalleCompraTo;
 import core.modelo.to.ProductoTo;
 import core.modelo.to.ProveedorTo;
 import java.awt.MouseInfo;
@@ -37,6 +38,8 @@ public class NuevaCompra extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         tableModelProdComp = (DefaultTableModel) tablaProductosCompra.getModel();
+        tablaProductosCompra.removeColumn(tablaProductosCompra.getColumn("det"));
+
         limpiar();
 
     }
@@ -96,15 +99,22 @@ public class NuevaCompra extends javax.swing.JDialog {
     private void agregarProducto() {
         AgregarProductoCompra bus = new AgregarProductoCompra(this, true);
         bus.setVisible(true);
-        ProductoTo prod = bus.getProducto();
+        DetalleCompraTo det = bus.getDetalle();
         Object[] fila = new Object[tableModelProdComp.getColumnCount()];
-        if(proveedorSeleccionado != null){
-            fila[0] = prod;
-            fila[1] = prod
-        
-        txtProveedorNuevaCompra.setText(proveedorSeleccionado.getDocumento()+" "+proveedorSeleccionado.toString());
+        if(det != null){
+            fila[0] = det.getProducto();
+            fila[1] = det.getCantidad();
+            fila[2] = det.getCosto();
+            fila[3] = det.getPrecio();
+            fila[4] = det.getSubTotal();
+            fila[5] = det;
+            tableModelProdComp.addColumn(fila);
         }
     }
+    
+    private void calcularTotal(){
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -138,6 +148,8 @@ public class NuevaCompra extends javax.swing.JDialog {
         cboComprobante = new javax.swing.JComboBox<>();
         txtReferencia = new javax.swing.JTextField();
         txtImpuesto = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtTotal = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -280,14 +292,14 @@ public class NuevaCompra extends javax.swing.JDialog {
 
             },
             new String [] {
-                "Producto", "Cantidad", "Precio Compra", "Precio Venta", "Sub Total"
+                "Producto", "Cantidad", "Precio Compra", "Precio Venta", "Sub Total", "det"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -392,6 +404,12 @@ public class NuevaCompra extends javax.swing.JDialog {
 
         cboComprobante.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Boleta", "Factura", "Ticket" }));
 
+        jLabel11.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel11.setText("Total S/.: ");
+
+        txtTotal.setFocusable(false);
+
         javax.swing.GroupLayout panelImage1Layout = new javax.swing.GroupLayout(panelImage1);
         panelImage1.setLayout(panelImage1Layout);
         panelImage1Layout.setHorizontalGroup(
@@ -449,6 +467,12 @@ public class NuevaCompra extends javax.swing.JDialog {
                                         .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(10, 10, 10))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelImage1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         panelImage1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCancelar, btnCrear});
@@ -485,6 +509,10 @@ public class NuevaCompra extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
+                .addGap(10, 10, 10)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -685,6 +713,7 @@ btnLimpiar.setBackground(Utilidades.getColorEntered());        // TODO add your 
     private com.toedter.calendar.JDateChooser datFecha;
     private javax.swing.JLabel header;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -697,6 +726,7 @@ btnLimpiar.setBackground(Utilidades.getColorEntered());        // TODO add your 
     private javax.swing.JTextField txtImpuesto;
     private javax.swing.JTextField txtProveedorNuevaCompra;
     private javax.swing.JTextField txtReferencia;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 
 }

@@ -45,4 +45,8 @@ public class Utilidades {
     public static Dimension getMinimumDimension(){
         return new Dimension(100,25);
     }
+    
+    public static double redondearDosDecimales(double valor){
+        return (double)Math.round(valor * 100d) / 100d;
+    }
 }
