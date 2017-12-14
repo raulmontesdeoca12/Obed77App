@@ -35,8 +35,6 @@ public class DetalleCompraTo {
         this.codCompra = codCompra;
     }
 
-   
-
     public double getCosto() {
         return costo;
     }

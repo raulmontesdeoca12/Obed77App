@@ -18,6 +18,7 @@ public class ProductoTo {
     int categoria;
     String categoriaString;
     long stock;
+    double precio;
     int estatus; 
 
     public int getCategoria() {
@@ -68,6 +69,14 @@ public class ProductoTo {
         this.nombre = nombre;
     }
 
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+
     public long getStock() {
         return stock;
     }
@@ -93,5 +102,7 @@ public class ProductoTo {
         }
     }
     
-    
+    public String toString(){
+        return this.nombre;
+    }
 }

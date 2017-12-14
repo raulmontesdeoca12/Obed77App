@@ -101,4 +101,7 @@ public class ProveedorTo {
         }
     }
   
+    public String toString(){
+        return this.nombre;
+    }
 }

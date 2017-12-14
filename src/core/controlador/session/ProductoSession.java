@@ -55,6 +55,7 @@ public class ProductoSession {
             to.setCategoria(rs.getInt("categoria"));
             to.setCategoriaString(rs.getString("nombre_categoria"));
             to.setStock(rs.getInt("stock"));
+            to.setPrecio(rs.getDouble("precio_venta_si"));
             to.setEstatus(rs.getInt("estatus"));
             tos.add(to);
         }
@@ -83,7 +84,64 @@ public class ProductoSession {
      
      
      
-     
+      public ArrayList<ProductoTo> getProductosActivos() throws ClassNotFoundException, SQLException{
+        ProductoTo to = null;
+        ArrayList<ProductoTo> tos = new ArrayList<>();
+        String sql = "CALL obed.getProductosActivos()";
+        Connection con = null;
+        CallableStatement st = null;
+        ResultSet rs = null;
+        try{
+            con = ConexionBD.getConnection();
+            st = con.prepareCall(sql);
+            long inicio = System.currentTimeMillis();
+            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Ejecutando query");
+            st.execute();
+            long fin = System.currentTimeMillis();
+            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Query Ejecutado ["+(fin-inicio)+"]ms");
+            rs = st.getResultSet();
+            while(rs.next()){
+                
+//            cod INT(11) NOT NULL AUTO_INCREMENT,
+//            nombre VARCHAR(255) NOT NULL,
+//            descripcion VARCHAR(255) NOT NULL,
+//            categoria VARCHAR(255) NOT NULL,
+//            stock BIGINT(20) NOT NULL,
+//            estatus INT(11) NOT NULL,
+
+            to = new ProductoTo();
+            to.setCod(rs.getLong("cod"));
+            to.setNombre(rs.getString("nombre"));
+            to.setDescripcion(rs.getString("descripcion"));
+            to.setCategoria(rs.getInt("categoria"));
+            to.setCategoriaString(rs.getString("nombre_categoria"));
+            to.setStock(rs.getInt("stock"));
+            to.setPrecio(rs.getDouble("precio_venta_si"));
+            to.setEstatus(rs.getInt("estatus"));
+            tos.add(to);
+        }
+            
+        }catch (SQLException ex){
+            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error: "+ex.getMessage());
+            throw ex;
+        }catch (ClassNotFoundException ex){
+            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error: "+ex.getMessage());
+            throw ex;
+        }catch (Exception ex){
+            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error: "+ex.getMessage());
+            throw ex;
+        }finally{
+            if(rs!=null){
+                rs.close();}
+            if(st!=null){
+                st.close();}
+            if(con!=null){
+                con.close();}
+        }
+
+        
+        return tos;
+    }
     public boolean insertarProducto (ProductoTo to) throws ClassNotFoundException, SQLException, Exception{
         boolean res = false;
 //        obed.insertarProducto(IN pCod INT, IN pNombre VARCHAR(255), IN pDescripcion VARCHAR(255), IN pCategoria VARCHAR(255), IN pUsuario VARCHAR(255))

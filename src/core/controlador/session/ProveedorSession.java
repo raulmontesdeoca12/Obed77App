@@ -87,6 +87,68 @@ public class ProveedorSession {
     }
      
      
+     public ArrayList<ProveedorTo> getProveedoresActivos() throws ClassNotFoundException, SQLException{
+        ProveedorTo to = null;
+        ArrayList<ProveedorTo> tos = new ArrayList<>();
+        String sql = "CALL obed.getProveedoresActivos()";
+        Connection con = null;
+        CallableStatement st = null;
+        ResultSet rs = null;
+        try{
+            con = ConexionBD.getConnection();
+            st = con.prepareCall(sql);
+            long inicio = System.currentTimeMillis();
+            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Ejecutando query");
+            st.execute();
+            long fin = System.currentTimeMillis();
+            LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Query Ejecutado ["+(fin-inicio)+"]ms");
+            rs = st.getResultSet();
+            while(rs.next()){
+                
+//                tipo_t_documento VARCHAR(25) NOT NULL,
+//                documento VARCHAR(30) NOT NULL,
+//                nombre VARCHAR(255) NOT NULL,
+//                contacto VARCHAR(150) DEFAULT NULL,
+//                telefono VARCHAR(25) DEFAULT NULL,
+//                correo VARCHAR(150) DEFAULT NULL,
+//                direccion VARCHAR(255) DEFAULT NULL,
+//                estatus INT(11) NOT NULL DEFAULT 1,
+
+            to = new ProveedorTo();
+            to.setTipoDocumento(rs.getString("tipo_t_documento"));
+            to.setDocumento(rs.getString("documento"));
+            to.setNombre(rs.getString("nombre"));
+            to.setContacto(rs.getString("contacto"));
+            to.setTelefono(rs.getString("telefono"));
+            to.setCorreo(rs.getString("correo"));
+            to.setDireccion(rs.getString("direccion"));
+            to.setEstatus(rs.getInt("estatus"));
+            tos.add(to);
+        }
+            
+        }catch (SQLException ex){
+            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error: "+ex.getMessage());
+            throw ex;
+        }catch (ClassNotFoundException ex){
+            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error: "+ex.getMessage());
+            throw ex;
+        }catch (Exception ex){
+            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error: "+ex.getMessage());
+            throw ex;
+        }finally{
+            if(rs!=null){
+                rs.close();}
+            if(st!=null){
+                st.close();}
+            if(con!=null){
+                con.close();}
+        }
+
+        
+        return tos;
+    }
+     
+     
      
      
     public boolean insertarProveedor (ProveedorTo to) throws ClassNotFoundException, SQLException, Exception{
