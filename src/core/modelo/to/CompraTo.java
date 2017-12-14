@@ -15,8 +15,8 @@ import java.util.Date;
  * @author Saito
  */
 public class CompraTo {
-    private final String APROBADO = "APROBADO";
-    private final String ANULADO = "ANULADO";
+    private final String APROBADO = "APROBADA";
+    private final String ANULADO = "ANULADA";
     long cod;
     Date fecha;
     ProveedorTo proveedor;
