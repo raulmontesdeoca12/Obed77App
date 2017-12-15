@@ -107,7 +107,7 @@
                   <Font name="Tahoma" size="11" style="1"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="0"/>
-                <Property name="text" type="java.lang.String" value="Nueva Compra"/>
+                <Property name="text" type="java.lang.String" value="Nueva Venta"/>
                 <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
                   <Color id="Cursor Por defecto"/>
                 </Property>
@@ -169,9 +169,9 @@
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Component id="txtProveedorNuevaCompra" min="-2" pref="387" max="-2" attributes="0"/>
+                                      <Component id="txtClienteNuevaVenta" min="-2" pref="387" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="btnBuscarProv" min="-2" pref="85" max="-2" attributes="0"/>
+                                      <Component id="btnBuscarCli" min="-2" pref="85" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="datFecha" max="32767" attributes="0"/>
                                   </Group>
@@ -210,10 +210,10 @@
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="9" max="32767" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="btnBuscarProv" alignment="1" pref="0" max="32767" attributes="0"/>
-                          <Component id="txtProveedorNuevaCompra" alignment="1" max="32767" attributes="0"/>
+                          <Component id="btnBuscarCli" alignment="1" pref="0" max="32767" attributes="0"/>
+                          <Component id="txtClienteNuevaVenta" alignment="1" max="32767" attributes="0"/>
                           <Component id="datFecha" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -315,10 +315,10 @@
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                 </Property>
                 <Property name="horizontalAlignment" type="int" value="4"/>
-                <Property name="text" type="java.lang.String" value="Proveedor"/>
+                <Property name="text" type="java.lang.String" value="Cliente"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="btnBuscarProv">
+            <Component class="javax.swing.JButton" name="btnBuscarCli">
               <Properties>
                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -341,9 +341,9 @@
                 </Property>
               </Properties>
               <Events>
-                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnBuscarProvMouseEntered"/>
-                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnBuscarProvMouseExited"/>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBuscarProvActionPerformed"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnBuscarCliMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnBuscarCliMouseExited"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBuscarCliActionPerformed"/>
               </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
@@ -392,14 +392,15 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTable" name="tablaProductosCompra">
+                <Component class="javax.swing.JTable" name="tablaProductosVenta">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="6" rowCount="0">
+                      <Table columnCount="7" rowCount="0">
                         <Column editable="false" title="Producto" type="java.lang.Object"/>
                         <Column editable="false" title="Cantidad" type="java.lang.Integer"/>
-                        <Column editable="false" title="Precio Compra" type="java.lang.String"/>
                         <Column editable="false" title="Precio Venta" type="java.lang.String"/>
+                        <Column editable="false" title="Descuento" type="java.lang.String"/>
+                        <Column editable="true" title="Imp" type="java.lang.String"/>
                         <Column editable="false" title="Sub Total" type="java.lang.String"/>
                         <Column editable="true" title="det" type="java.lang.Object"/>
                       </Table>
@@ -426,6 +427,11 @@
                           <Editor/>
                           <Renderer/>
                         </Column>
+                        <Column maxWidth="55" minWidth="-1" prefWidth="-1" resizable="true">
+                          <Title/>
+                          <Editor/>
+                          <Renderer/>
+                        </Column>
                         <Column maxWidth="-1" minWidth="50" prefWidth="-1" resizable="true">
                           <Title/>
                           <Editor/>
@@ -444,8 +450,8 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tablaProductosCompraMouseClicked"/>
-                    <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="tablaProductosCompraPropertyChange"/>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tablaProductosVentaMouseClicked"/>
+                    <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="tablaProductosVentaPropertyChange"/>
                   </Events>
                   <AuxValues>
                     <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="9"/>
@@ -537,7 +543,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLimpiarActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JTextField" name="txtProveedorNuevaCompra">
+            <Component class="javax.swing.JTextField" name="txtClienteNuevaVenta">
               <Properties>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>

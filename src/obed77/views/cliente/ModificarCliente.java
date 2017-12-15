@@ -120,7 +120,7 @@ public class ModificarCliente extends javax.swing.JDialog {
 
         header.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         header.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        header.setText("Modificar Proveedor");
+        header.setText("Modificar Cliente");
         header.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         header.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {

@@ -3,25 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package obed77.views.compras;
+package obed77.views.ventas;
 
 import core.controlador.principal.ErroresMap;
 import core.controlador.principal.Utilidades;
-import core.controlador.session.CompraSession;
+import core.controlador.session.VentaSession;
 import core.logger.LogService;
-import core.modelo.to.CompraTo;
-import core.modelo.to.DetalleCompraTo;
+import core.modelo.to.ClienteTo;
+import core.modelo.to.DetalleVentaTo;
 import core.modelo.to.ProductoTo;
-import core.modelo.to.ProveedorTo;
+import core.modelo.to.VentaTo;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import obed77.Principal;
+import obed77.views.cliente.BuscarCliente;
 import obed77.views.dialogosComunes.JOptionDialog;
-import obed77.views.producto.AgregarProductoCompra;
-import obed77.views.proveedor.BuscarProveedor;
+import obed77.views.producto.AgregarProductoVenta;
 
 
 
@@ -29,19 +29,19 @@ import obed77.views.proveedor.BuscarProveedor;
  *
  * @author Saito
  */
-public class NuevaCompra extends javax.swing.JDialog {
+public class NuevaVenta extends javax.swing.JDialog {
 
     int x, y;
     static DefaultTableModel tableModelProdComp;
-    public ProveedorTo proveedorSeleccionado;
-    AgregarProductoCompra bus;
+    public ClienteTo clienteSeleccionado;
+    AgregarProductoVenta bus;
 
-    public NuevaCompra(java.awt.Frame parent, boolean modal) {
+    public NuevaVenta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        tableModelProdComp = (DefaultTableModel) tablaProductosCompra.getModel();
-        tablaProductosCompra.removeColumn(tablaProductosCompra.getColumn("det"));
-        bus = new AgregarProductoCompra(this, true);
+        tableModelProdComp = (DefaultTableModel) tablaProductosVenta.getModel();
+        tablaProductosVenta.removeColumn(tablaProductosVenta.getColumn("det"));
+        bus = new AgregarProductoVenta(this, true);
 
         limpiar();
 
@@ -49,90 +49,92 @@ public class NuevaCompra extends javax.swing.JDialog {
 
     private void limpiar() {
         tableModelProdComp.setRowCount(0);
-        tablaProductosCompra.setModel(tableModelProdComp);
+        tablaProductosVenta.setModel(tableModelProdComp);
         cboComprobante.setSelectedIndex(0);
         datFecha.setDate(null);
         txtReferencia.setText("");
-        txtProveedorNuevaCompra.setText("");
+        txtClienteNuevaVenta.setText("");
         btnCrear.setEnabled(false);
-        proveedorSeleccionado = new ProveedorTo();
+        clienteSeleccionado = new ClienteTo();
     }
 
     private void validarCrear() {
-        if (txtProveedorNuevaCompra.getText().isEmpty() || datFecha.getDate() == null
+        if (txtClienteNuevaVenta.getText().isEmpty() || datFecha.getDate() == null
             || txtReferencia.getText().isEmpty()
-            || tablaProductosCompra.getRowCount() <= 0 || proveedorSeleccionado == null) {
+            || tablaProductosVenta.getRowCount() <= 0 || clienteSeleccionado == null) {
             btnCrear.setEnabled(false);
         } else {
             btnCrear.setEnabled(true);
         }
     }
 
-    private void crearCompra() {
-        CompraTo to = new CompraTo();
+    private void crearVenta() {
+        VentaTo to = new VentaTo();
         try {
-            to.setProveedor(proveedorSeleccionado);
+            to.setCliente(clienteSeleccionado);
             to.setFecha(datFecha.getDate());
             to.setDocumento(cboComprobante.getSelectedItem().toString());
             to.setReferencia(txtReferencia.getText());
-            ArrayList<DetalleCompraTo> listDet = new ArrayList<>();
+            ArrayList<DetalleVentaTo> listDet = new ArrayList<>();
             
-            for(int i = 0; i<tablaProductosCompra.getRowCount(); i++){
-                DetalleCompraTo det = (DetalleCompraTo) tablaProductosCompra.getModel().getValueAt(i, 5);
+            for(int i = 0; i<tablaProductosVenta.getRowCount(); i++){
+                DetalleVentaTo det = (DetalleVentaTo) tablaProductosVenta.getModel().getValueAt(i, 6);
                 listDet.add(det);
             }
             to.setDetalles(listDet);
             to.setUsuario(Principal.getUsuarioPrincipal().getUser());
-            CompraSession session = new CompraSession();
-            session.insertarCompra(to);
-            JOptionDialog.showMessageDialog(this, "Compra creada correctamente", "Compras", JOptionDialog.INFORMACION_ICON);
-            PanelCompras.cargar();
+            VentaSession session = new VentaSession();
+            session.insertarVenta(to);
+            JOptionDialog.showMessageDialog(this, "Venta creada correctamente", "Ventas", JOptionDialog.INFORMACION_ICON);
+            PanelVentas.cargar();
             this.dispose();
         } catch (SQLException ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), to.getProveedor().toString()), "Compras", JOptionDialog.INFORMACION_ICON);
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), to.getCliente().toString()), "Ventas", JOptionDialog.INFORMACION_ICON);
         } catch (Exception ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR: " + ex.getMessage());
+            ex.printStackTrace();
             JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, ex.getMessage()), "Productos", JOptionDialog.INFORMACION_ICON);
         }
     }
 
-    private void buscarProveedor() {
-        BuscarProveedor bus = new BuscarProveedor(this, true);
+    private void buscarCliente() {
+        BuscarCliente bus = new BuscarCliente(this, true);
         bus.setVisible(true);
-        proveedorSeleccionado = bus.getProveedor();
-        if(proveedorSeleccionado != null){
-        txtProveedorNuevaCompra.setText(proveedorSeleccionado.getDocumento()+" "+proveedorSeleccionado.toString());
+        clienteSeleccionado = bus.getCliente();
+        if(clienteSeleccionado != null){
+        txtClienteNuevaVenta.setText(clienteSeleccionado.getDocumento()+" "+clienteSeleccionado.toString());
         }
     }
     
     private void agregarProducto() {
         
         bus.setVisible(true);
-        DetalleCompraTo det = bus.getDetalle();
+        DetalleVentaTo det = bus.getDetalle();
         Object[] fila = new Object[tableModelProdComp.getColumnCount()];
         if(det != null){
             if(!containProduct(det.getProducto())){
                 fila[0] = det.getProducto();
                 fila[1] = det.getCantidad();
-                fila[2] = det.getCosto();
-                fila[3] = det.getPrecio();
-                fila[4] = det.getSubTotal();
-                fila[5] = det;
+                fila[2] = det.getPrecio();
+                fila[3] = det.getDescuento();
+                fila[4] = det.getImpuesto();
+                fila[5] = det.getSubTotal();
+                fila[6] = det;
                 tableModelProdComp.addRow(fila);
                 LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Agregando producto");
                 calcularTotal();
                 validarCrear();
             }else{
-                 JOptionDialog.showMessageDialog(this, "El producto ya está seleccionado", "Compras", JOptionDialog.INFORMACION_ICON);
+                 JOptionDialog.showMessageDialog(this, "El producto ya está seleccionado", "Ventas", JOptionDialog.INFORMACION_ICON);
             }
         }
     }
     
     private void calcularTotal(){
         double total = 0;
-        for(int i = 0; i<tablaProductosCompra.getRowCount(); i++){
-            double sub = Double.parseDouble(tablaProductosCompra.getValueAt(i, 4).toString());
+        for(int i = 0; i<tablaProductosVenta.getRowCount(); i++){
+            double sub = Double.parseDouble(tablaProductosVenta.getValueAt(i, 5).toString());
             total = total+sub;
         }
         txtTotal.setText(total+"");
@@ -140,8 +142,8 @@ public class NuevaCompra extends javax.swing.JDialog {
     
     private boolean containProduct(ProductoTo producto){
         boolean res = false;
-        for(int i = 0; i<tablaProductosCompra.getRowCount(); i++){
-            ProductoTo prod = (ProductoTo) tablaProductosCompra.getValueAt(i, 0);
+        for(int i = 0; i<tablaProductosVenta.getRowCount(); i++){
+            ProductoTo prod = (ProductoTo) tablaProductosVenta.getValueAt(i, 0);
             if (prod.equals(producto)) {
                 res=true ;
             }
@@ -166,17 +168,17 @@ public class NuevaCompra extends javax.swing.JDialog {
         btnCrear = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        btnBuscarProv = new javax.swing.JButton();
+        btnBuscarCli = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaProductosCompra = new javax.swing.JTable();
+        tablaProductosVenta = new javax.swing.JTable();
         btnAgregar = new javax.swing.JButton();
         btnQuitar = new javax.swing.JButton();
         btnLimpiar = new javax.swing.JButton();
-        txtProveedorNuevaCompra = new javax.swing.JTextField();
+        txtClienteNuevaVenta = new javax.swing.JTextField();
         datFecha = new com.toedter.calendar.JDateChooser();
         cboComprobante = new javax.swing.JComboBox<>();
         txtReferencia = new javax.swing.JTextField();
@@ -195,7 +197,7 @@ public class NuevaCompra extends javax.swing.JDialog {
 
         header.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         header.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        header.setText("Nueva Compra");
+        header.setText("Nueva Venta");
         header.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         header.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
@@ -272,28 +274,28 @@ public class NuevaCompra extends javax.swing.JDialog {
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText("Proveedor");
+        jLabel4.setText("Cliente");
 
-        btnBuscarProv.setBackground(new java.awt.Color(255, 255, 255));
-        btnBuscarProv.setText("Buscar");
-        btnBuscarProv.setBorderPainted(false);
-        btnBuscarProv.setContentAreaFilled(false);
-        btnBuscarProv.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnBuscarProv.setMaximumSize(new java.awt.Dimension(110, 25));
-        btnBuscarProv.setMinimumSize(new java.awt.Dimension(110, 25));
-        btnBuscarProv.setOpaque(true);
-        btnBuscarProv.setPreferredSize(new java.awt.Dimension(110, 25));
-        btnBuscarProv.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnBuscarCli.setBackground(new java.awt.Color(255, 255, 255));
+        btnBuscarCli.setText("Buscar");
+        btnBuscarCli.setBorderPainted(false);
+        btnBuscarCli.setContentAreaFilled(false);
+        btnBuscarCli.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnBuscarCli.setMaximumSize(new java.awt.Dimension(110, 25));
+        btnBuscarCli.setMinimumSize(new java.awt.Dimension(110, 25));
+        btnBuscarCli.setOpaque(true);
+        btnBuscarCli.setPreferredSize(new java.awt.Dimension(110, 25));
+        btnBuscarCli.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnBuscarProvMouseEntered(evt);
+                btnBuscarCliMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnBuscarProvMouseExited(evt);
+                btnBuscarCliMouseExited(evt);
             }
         });
-        btnBuscarProv.addActionListener(new java.awt.event.ActionListener() {
+        btnBuscarCli.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarProvActionPerformed(evt);
+                btnBuscarCliActionPerformed(evt);
             }
         });
 
@@ -315,19 +317,19 @@ public class NuevaCompra extends javax.swing.JDialog {
 
         jScrollPane1.setAutoscrolls(true);
 
-        tablaProductosCompra.setModel(new javax.swing.table.DefaultTableModel(
+        tablaProductosVenta.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Producto", "Cantidad", "Precio Compra", "Precio Venta", "Sub Total", "det"
+                "Producto", "Cantidad", "Precio Venta", "Descuento", "Imp", "Sub Total", "det"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
+                java.lang.Object.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, true
+                false, false, false, false, true, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -338,25 +340,26 @@ public class NuevaCompra extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        tablaProductosCompra.setOpaque(false);
-        tablaProductosCompra.getTableHeader().setReorderingAllowed(false);
-        tablaProductosCompra.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaProductosVenta.setOpaque(false);
+        tablaProductosVenta.getTableHeader().setReorderingAllowed(false);
+        tablaProductosVenta.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaProductosCompraMouseClicked(evt);
+                tablaProductosVentaMouseClicked(evt);
             }
         });
-        tablaProductosCompra.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        tablaProductosVenta.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                tablaProductosCompraPropertyChange(evt);
+                tablaProductosVentaPropertyChange(evt);
             }
         });
-        jScrollPane1.setViewportView(tablaProductosCompra);
-        if (tablaProductosCompra.getColumnModel().getColumnCount() > 0) {
-            tablaProductosCompra.getColumnModel().getColumn(0).setMinWidth(120);
-            tablaProductosCompra.getColumnModel().getColumn(1).setMaxWidth(65);
-            tablaProductosCompra.getColumnModel().getColumn(2).setMinWidth(50);
-            tablaProductosCompra.getColumnModel().getColumn(3).setMinWidth(50);
-            tablaProductosCompra.getColumnModel().getColumn(4).setMinWidth(50);
+        jScrollPane1.setViewportView(tablaProductosVenta);
+        if (tablaProductosVenta.getColumnModel().getColumnCount() > 0) {
+            tablaProductosVenta.getColumnModel().getColumn(0).setMinWidth(120);
+            tablaProductosVenta.getColumnModel().getColumn(1).setMaxWidth(65);
+            tablaProductosVenta.getColumnModel().getColumn(2).setMinWidth(50);
+            tablaProductosVenta.getColumnModel().getColumn(3).setMinWidth(50);
+            tablaProductosVenta.getColumnModel().getColumn(4).setMaxWidth(55);
+            tablaProductosVenta.getColumnModel().getColumn(5).setMinWidth(50);
         }
 
         btnAgregar.setBackground(new java.awt.Color(255, 255, 255));
@@ -428,7 +431,7 @@ public class NuevaCompra extends javax.swing.JDialog {
             }
         });
 
-        txtProveedorNuevaCompra.setFocusable(false);
+        txtClienteNuevaVenta.setFocusable(false);
 
         datFecha.setOpaque(false);
         datFecha.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
@@ -493,9 +496,9 @@ public class NuevaCompra extends javax.swing.JDialog {
                     .addGroup(panelImage1Layout.createSequentialGroup()
                         .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(panelImage1Layout.createSequentialGroup()
-                                .addComponent(txtProveedorNuevaCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtClienteNuevaVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnBuscarProv, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnBuscarCli, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(datFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(panelImage1Layout.createSequentialGroup()
@@ -526,10 +529,10 @@ public class NuevaCompra extends javax.swing.JDialog {
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnBuscarProv, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(txtProveedorNuevaCompra, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnBuscarCli, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(txtClienteNuevaVenta, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(datFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -616,7 +619,7 @@ public class NuevaCompra extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCrearMouseExited
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
-        crearCompra();           // TODO add your handling code here:
+        crearVenta();           // TODO add your handling code here:
     }//GEN-LAST:event_btnCrearActionPerformed
 
     private void btnCancelarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarMouseEntered
@@ -631,28 +634,28 @@ public class NuevaCompra extends javax.swing.JDialog {
         this.dispose();       // TODO add your handling code here:
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void btnBuscarProvMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscarProvMouseEntered
-        btnBuscarProv.setBackground(Utilidades.getColorEntered());        // TODO add your handling code here:
-    }//GEN-LAST:event_btnBuscarProvMouseEntered
+    private void btnBuscarCliMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscarCliMouseEntered
+        btnBuscarCli.setBackground(Utilidades.getColorEntered());        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarCliMouseEntered
 
-    private void btnBuscarProvMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscarProvMouseExited
-        btnBuscarProv.setBackground(Utilidades.getColorNormalMenu());  // TODO add your handling code here:
-    }//GEN-LAST:event_btnBuscarProvMouseExited
+    private void btnBuscarCliMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBuscarCliMouseExited
+        btnBuscarCli.setBackground(Utilidades.getColorNormalMenu());  // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarCliMouseExited
 
-    private void btnBuscarProvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarProvActionPerformed
-        buscarProveedor();
+    private void btnBuscarCliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarCliActionPerformed
+        buscarCliente();
         validarCrear();        // TODO add your handling code here:
-    }//GEN-LAST:event_btnBuscarProvActionPerformed
+    }//GEN-LAST:event_btnBuscarCliActionPerformed
 
-    private void tablaProductosCompraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosCompraMouseClicked
+    private void tablaProductosVentaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosVentaMouseClicked
         validarCrear();        // TODO add your handling code here:
-    }//GEN-LAST:event_tablaProductosCompraMouseClicked
+    }//GEN-LAST:event_tablaProductosVentaMouseClicked
 
-    private void tablaProductosCompraPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaProductosCompraPropertyChange
-        if (tablaProductosCompra.getSelectedRow() == -1) {
+    private void tablaProductosVentaPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaProductosVentaPropertyChange
+        if (tablaProductosVenta.getSelectedRow() == -1) {
              validarCrear();
         }// TODO add your handling code here:
-    }//GEN-LAST:event_tablaProductosCompraPropertyChange
+    }//GEN-LAST:event_tablaProductosVentaPropertyChange
 
     private void btnAgregarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAgregarMouseEntered
 btnAgregar.setBackground(Utilidades.getColorEntered());        // TODO add your handling code here:
@@ -677,9 +680,9 @@ btnQuitar.setBackground(Utilidades.getColorNormalMenu());         // TODO add yo
 
     private void btnQuitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitarActionPerformed
   btnQuitar.setBackground(Utilidades.getColorNormalMenu()); 
-  if(tablaProductosCompra.getSelectedRow()!=-1){
+  if(tablaProductosVenta.getSelectedRow()!=-1){
       LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Quitando Producto");
-      tableModelProdComp.removeRow(tablaProductosCompra.getSelectedRow());
+      tableModelProdComp.removeRow(tablaProductosVenta.getSelectedRow());
       calcularTotal();
   }
   
@@ -730,14 +733,22 @@ validarCrear();        // TODO add your handling code here:
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NuevaCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NuevaVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NuevaCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NuevaVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NuevaCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NuevaVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NuevaCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NuevaVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -751,7 +762,7 @@ validarCrear();        // TODO add your handling code here:
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                NuevaCompra dialog = new NuevaCompra(new javax.swing.JFrame(), true);
+                NuevaVenta dialog = new NuevaVenta(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -766,7 +777,7 @@ validarCrear();        // TODO add your handling code here:
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnAgregar;
-    private javax.swing.JButton btnBuscarProv;
+    private javax.swing.JButton btnBuscarCli;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCrear;
     private javax.swing.JButton btnLimpiar;
@@ -783,8 +794,8 @@ validarCrear();        // TODO add your handling code here:
     private javax.swing.JScrollPane jScrollPane1;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private javax.swing.JPanel panelTop;
-    public static javax.swing.JTable tablaProductosCompra;
-    private javax.swing.JTextField txtProveedorNuevaCompra;
+    public static javax.swing.JTable tablaProductosVenta;
+    private javax.swing.JTextField txtClienteNuevaVenta;
     private javax.swing.JTextField txtReferencia;
     private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables

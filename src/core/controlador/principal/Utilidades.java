@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -48,5 +49,23 @@ public class Utilidades {
     
     public static double redondearDosDecimales(double valor){
         return (double)Math.round(valor * 100d) / 100d;
+    }
+    
+    public static Date getPrimerDiaMes(int anio,int mes) throws ParseException{
+
+    Calendar calendario=Calendar.getInstance();
+    calendario.set(anio, mes-1, 1);
+    String fecha = calendario.getActualMinimum(Calendar.DAY_OF_MONTH)+"/"+mes+"/"+anio;
+    return  stringToDate(fecha, "dd/MM/yyyy");
+
+    }
+    
+    public static Date getUltimoDiaMes(int anio,int mes) throws ParseException{
+
+    Calendar calendario=Calendar.getInstance();
+    calendario.set(anio, mes-1, 1);
+    String fecha = calendario.getActualMaximum(Calendar.DAY_OF_MONTH)+"/"+mes+"/"+anio;
+    return  stringToDate(fecha, "dd/MM/yyyy");
+
     }
 }

@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package obed77.views.compras;
+package obed77.views.ventas;
 
 import core.controlador.principal.Utilidades;
-import core.controlador.session.CompraSession;
-import core.modelo.to.DetalleCompraTo;
+import core.controlador.session.VentaSession;
+import core.modelo.to.DetalleVentaTo;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.sql.SQLException;
@@ -22,61 +22,61 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Saito
  */
-public class DetallesCompra extends javax.swing.JDialog {
+public class DetallesVenta extends javax.swing.JDialog {
 
     int x, y;
-    DefaultTableModel tableModelDetCompra;
+    DefaultTableModel tableModelDetVenta;
 
-    public DetallesCompra(java.awt.Frame parent, boolean modal) {
+    public DetallesVenta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        tableModelDetCompra = (DefaultTableModel) tablaProductosCompraDetalle.getModel();
+        tableModelDetVenta = (DefaultTableModel) tablaProductosVentaDetalle.getModel();
         cargar();
 
     }
 
     private void cargar() {
         
-        int fsel = PanelCompras.tablaCompras.getSelectedRow();
-        tableModelDetCompra.setRowCount(0);
-        tablaProductosCompraDetalle.setModel(tableModelDetCompra);
-        long cod = Long.parseLong(PanelCompras.tablaCompras.getValueAt(fsel, 0).toString());
-        String fecha = PanelCompras.tablaCompras.getValueAt(fsel, 1).toString();
-        String proveedor = PanelCompras.tablaCompras.getValueAt(fsel, 2).toString();
-        String usuario = PanelCompras.tablaCompras.getValueAt(fsel, 3).toString();
-        String documento = PanelCompras.tablaCompras.getValueAt(fsel, 4).toString();
-        String referencia = PanelCompras.tablaCompras.getValueAt(fsel, 5).toString();
-        String totalCompra = PanelCompras.tablaCompras.getValueAt(fsel, 6).toString();
-        String estado = PanelCompras.tablaCompras.getValueAt(fsel, 7).toString();
-        txtProveedor.setText(proveedor);
+        int fsel = PanelVentas.tablaVentas.getSelectedRow();
+        tableModelDetVenta.setRowCount(0);
+        tablaProductosVentaDetalle.setModel(tableModelDetVenta);
+        String documento = PanelVentas.tablaVentas.getValueAt(fsel, 0).toString();
+        String referencia = PanelVentas.tablaVentas.getValueAt(fsel, 1).toString();
+        String fecha = PanelVentas.tablaVentas.getValueAt(fsel, 2).toString();
+        String cliente = PanelVentas.tablaVentas.getValueAt(fsel, 3).toString();
+        String usuario = PanelVentas.tablaVentas.getValueAt(fsel, 4).toString();
+        String totalVenta = PanelVentas.tablaVentas.getValueAt(fsel, 5).toString();
+        String estado = PanelVentas.tablaVentas.getValueAt(fsel, 6).toString();
+        txtCliente.setText(cliente);
         txtFecha.setText(fecha);
         txtEstado.setText(estado);
         txtComprobante.setText(documento);
         txtReferencia.setText(referencia);
         txtUsuario.setText(usuario);
-        txtTotal.setText(totalCompra);
+        txtTotal.setText(totalVenta);
         
         
         
         
-        Object[] fila = new Object[tableModelDetCompra.getColumnCount()];
-        CompraSession compSession = new CompraSession();
-        ArrayList<DetalleCompraTo> list = new ArrayList<>();
+        Object[] fila = new Object[tableModelDetVenta.getColumnCount()];
+        VentaSession ventSession = new VentaSession();
+        ArrayList<DetalleVentaTo> list = new ArrayList<>();
         try {
-            list = compSession.getDetallesCompras(cod);
+            list = ventSession.getDetallesVentas(documento,referencia);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DetallesCompra.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DetallesVenta.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
-            Logger.getLogger(DetallesCompra.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DetallesVenta.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for(DetalleCompraTo to : list){
+        for(DetalleVentaTo to : list){
             fila[0] = to.getProducto();
             fila[1] = to.getCantidad();
-            fila[2] = to.getCosto();
-            fila[3] = to.getImpuesto();
-            fila[4] = to.getSubTotal();
-            fila[5] = to.getPrecio();
-        tableModelDetCompra.addRow(fila);
+            fila[2] = to.getPrecio();
+            fila[3] = to.getDescuento();
+            fila[4] = to.getImpuesto();
+            fila[5] = to.getSubTotal();
+            
+        tableModelDetVenta.addRow(fila);
         }
     }
 
@@ -100,8 +100,8 @@ public class DetallesCompra extends javax.swing.JDialog {
         jLabel8 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tablaProductosCompraDetalle = new javax.swing.JTable();
-        txtProveedor = new javax.swing.JTextField();
+        tablaProductosVentaDetalle = new javax.swing.JTable();
+        txtCliente = new javax.swing.JTextField();
         txtReferencia = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JTextField();
@@ -124,7 +124,7 @@ public class DetallesCompra extends javax.swing.JDialog {
 
         header.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         header.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        header.setText("Detalles de Compra");
+        header.setText("Detalles de Venta");
         header.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         header.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
@@ -177,7 +177,7 @@ public class DetallesCompra extends javax.swing.JDialog {
 
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel4.setText("Proveedor");
+        jLabel4.setText("Cliente");
 
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
@@ -197,12 +197,12 @@ public class DetallesCompra extends javax.swing.JDialog {
 
         jScrollPane1.setAutoscrolls(true);
 
-        tablaProductosCompraDetalle.setModel(new javax.swing.table.DefaultTableModel(
+        tablaProductosVentaDetalle.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Producto", "Cantidad", "Precio Compra", "Imp", "Sub Total", "Precio Venta"
+                "Producto", "Cantidad", "Precio Venta", "Descuento", "Imp", "Sub Total"
             }
         ) {
             Class[] types = new Class [] {
@@ -220,30 +220,30 @@ public class DetallesCompra extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        tablaProductosCompraDetalle.setFocusable(false);
-        tablaProductosCompraDetalle.setOpaque(false);
-        tablaProductosCompraDetalle.getTableHeader().setReorderingAllowed(false);
-        tablaProductosCompraDetalle.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaProductosVentaDetalle.setFocusable(false);
+        tablaProductosVentaDetalle.setOpaque(false);
+        tablaProductosVentaDetalle.getTableHeader().setReorderingAllowed(false);
+        tablaProductosVentaDetalle.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tablaProductosCompraDetalleMouseClicked(evt);
+                tablaProductosVentaDetalleMouseClicked(evt);
             }
         });
-        tablaProductosCompraDetalle.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        tablaProductosVentaDetalle.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                tablaProductosCompraDetallePropertyChange(evt);
+                tablaProductosVentaDetallePropertyChange(evt);
             }
         });
-        jScrollPane1.setViewportView(tablaProductosCompraDetalle);
-        if (tablaProductosCompraDetalle.getColumnModel().getColumnCount() > 0) {
-            tablaProductosCompraDetalle.getColumnModel().getColumn(0).setMinWidth(120);
-            tablaProductosCompraDetalle.getColumnModel().getColumn(1).setMaxWidth(65);
-            tablaProductosCompraDetalle.getColumnModel().getColumn(2).setMinWidth(50);
-            tablaProductosCompraDetalle.getColumnModel().getColumn(3).setMaxWidth(40);
-            tablaProductosCompraDetalle.getColumnModel().getColumn(4).setMinWidth(50);
-            tablaProductosCompraDetalle.getColumnModel().getColumn(5).setMinWidth(50);
+        jScrollPane1.setViewportView(tablaProductosVentaDetalle);
+        if (tablaProductosVentaDetalle.getColumnModel().getColumnCount() > 0) {
+            tablaProductosVentaDetalle.getColumnModel().getColumn(0).setMinWidth(120);
+            tablaProductosVentaDetalle.getColumnModel().getColumn(1).setMaxWidth(65);
+            tablaProductosVentaDetalle.getColumnModel().getColumn(2).setMinWidth(50);
+            tablaProductosVentaDetalle.getColumnModel().getColumn(3).setMinWidth(50);
+            tablaProductosVentaDetalle.getColumnModel().getColumn(4).setMaxWidth(40);
+            tablaProductosVentaDetalle.getColumnModel().getColumn(5).setMinWidth(50);
         }
 
-        txtProveedor.setFocusable(false);
+        txtCliente.setFocusable(false);
 
         txtReferencia.setFocusable(false);
         txtReferencia.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -295,7 +295,7 @@ public class DetallesCompra extends javax.swing.JDialog {
                                     .addGroup(panelImage1Layout.createSequentialGroup()
                                         .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel4)
-                                            .addComponent(txtProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(panelImage1Layout.createSequentialGroup()
@@ -336,7 +336,7 @@ public class DetallesCompra extends javax.swing.JDialog {
                     .addComponent(jLabel12))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtProveedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -418,13 +418,13 @@ public class DetallesCompra extends javax.swing.JDialog {
         this.dispose();       // TODO add your handling code here:
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void tablaProductosCompraDetalleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosCompraDetalleMouseClicked
+    private void tablaProductosVentaDetalleMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaProductosVentaDetalleMouseClicked
          // TODO add your handling code here:
-    }//GEN-LAST:event_tablaProductosCompraDetalleMouseClicked
+    }//GEN-LAST:event_tablaProductosVentaDetalleMouseClicked
 
-    private void tablaProductosCompraDetallePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaProductosCompraDetallePropertyChange
+    private void tablaProductosVentaDetallePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tablaProductosVentaDetallePropertyChange
 // TODO add your handling code here:
-    }//GEN-LAST:event_tablaProductosCompraDetallePropertyChange
+    }//GEN-LAST:event_tablaProductosVentaDetallePropertyChange
 
     private void txtReferenciaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtReferenciaKeyReleased
       // TODO add your handling code here:
@@ -447,14 +447,30 @@ public class DetallesCompra extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DetallesCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DetallesVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DetallesCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DetallesVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DetallesCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DetallesVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DetallesCompra.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DetallesVenta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -476,7 +492,7 @@ public class DetallesCompra extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                DetallesCompra dialog = new DetallesCompra(new javax.swing.JFrame(), true);
+                DetallesVenta dialog = new DetallesVenta(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -503,11 +519,11 @@ public class DetallesCompra extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private javax.swing.JPanel panelTop;
-    private javax.swing.JTable tablaProductosCompraDetalle;
+    private javax.swing.JTable tablaProductosVentaDetalle;
+    private javax.swing.JTextField txtCliente;
     private javax.swing.JTextField txtComprobante;
     private javax.swing.JTextField txtEstado;
     private javax.swing.JTextField txtFecha;
-    private javax.swing.JTextField txtProveedor;
     private javax.swing.JTextField txtReferencia;
     private javax.swing.JTextField txtTotal;
     private javax.swing.JTextField txtUsuario;

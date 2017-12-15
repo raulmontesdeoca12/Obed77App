@@ -5,6 +5,7 @@
  */
 package obed77;
 
+import core.controlador.helper.GenerarReportesExcelHelper;
 import core.controlador.hilos.HiloCerrando;
 import core.controlador.hilos.HiloIniciando;
 import core.controlador.principal.Utilidades;
@@ -27,6 +28,7 @@ import obed77.views.dialogosComunes.JOptionDialog;
 import obed77.views.producto.PanelCategoria;
 import obed77.views.producto.PanelProducto;
 import obed77.views.proveedor.PanelProveedor;
+import obed77.views.ventas.PanelVentas;
 import org.apache.commons.codec.digest.DigestUtils;
 
 
@@ -199,6 +201,22 @@ public class Principal extends javax.swing.JFrame {
         int index = multiPanel.indexOfTab(titulo);
         if (index == -1) {
             PanelCliente panel = new PanelCliente();
+            multiPanel.addTab(titulo, panel);
+            int i = multiPanel.indexOfTab(titulo);
+            multiPanel.setSelectedIndex(i);
+        } else {
+            JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
+        }
+
+    }
+
+
+    public void CrearPanelVentas() {
+        LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelVenta");
+        String titulo = "   Ventas   ";
+        int index = multiPanel.indexOfTab(titulo);
+        if (index == -1) {
+            PanelVentas panel = new PanelVentas();
             multiPanel.addTab(titulo, panel);
             int i = multiPanel.indexOfTab(titulo);
             multiPanel.setSelectedIndex(i);
@@ -889,6 +907,11 @@ public class Principal extends javax.swing.JFrame {
                 btnPrincipalVentasMouseReleased(evt);
             }
         });
+        btnPrincipalVentas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPrincipalVentasActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelPrincipalBotonesLayout = new javax.swing.GroupLayout(panelPrincipalBotones);
         panelPrincipalBotones.setLayout(panelPrincipalBotonesLayout);
@@ -932,6 +955,11 @@ public class Principal extends javax.swing.JFrame {
 
         menuListarVentas.setText("Gestionar");
         menuListarVentas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menuListarVentas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListarVentasActionPerformed(evt);
+            }
+        });
         menuVentas.add(menuListarVentas);
 
         subMenReportesVentas.setText("Reportes");
@@ -949,6 +977,11 @@ public class Principal extends javax.swing.JFrame {
         menuReporte1Ventas.setMaximumSize(null);
         menuReporte1Ventas.setMinimumSize(new java.awt.Dimension(110, 25));
         menuReporte1Ventas.setPreferredSize(new java.awt.Dimension(110, 25));
+        menuReporte1Ventas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuReporte1VentasActionPerformed(evt);
+            }
+        });
         subMenReportesVentas.add(menuReporte1Ventas);
 
         menuReporte2Ventas.setText("Por Semana");
@@ -1965,7 +1998,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInicialSalirMouseExited
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-         btnCerrarSesion.setBackground(Utilidades.getColorNormalMenu());
+        btnCerrarSesion.setBackground(Utilidades.getColorNormalMenu());
         int opc = JOptionDialog.showConfirmDialog(this, "¿Seguro que desea cerrar la sesión?", "Cerrar Sesión", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
 
@@ -2021,6 +2054,19 @@ public class Principal extends javax.swing.JFrame {
     private void menuListarClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListarClientesActionPerformed
         CrearPanelCliente();        // TODO add your handling code here:
     }//GEN-LAST:event_menuListarClientesActionPerformed
+
+    private void btnPrincipalVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrincipalVentasActionPerformed
+        CrearPanelVentas();        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPrincipalVentasActionPerformed
+
+    private void menuListarVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListarVentasActionPerformed
+        CrearPanelVentas();        // TODO add your handling code here:
+    }//GEN-LAST:event_menuListarVentasActionPerformed
+
+    private void menuReporte1VentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuReporte1VentasActionPerformed
+        GenerarReportesExcelHelper helper = new GenerarReportesExcelHelper();
+        helper.generar(2017);        // TODO add your handling code here:
+    }//GEN-LAST:event_menuReporte1VentasActionPerformed
 
     /**
      * @param args the command line arguments
