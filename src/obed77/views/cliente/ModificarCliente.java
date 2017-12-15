@@ -3,19 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package obed77.views.proveedor;
+package obed77.views.cliente;
 
 import core.controlador.principal.ErroresMap;
 import core.controlador.principal.Utilidades;
-import core.controlador.session.ProveedorSession;
+import core.controlador.session.ClienteSession;
 import core.logger.LogService;
-import core.modelo.to.ProveedorTo;
-import core.modelo.to.TipoDocumentoTo;
+import core.modelo.to.ClienteTo;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import javax.swing.DefaultComboBoxModel;
 import obed77.Principal;
 import obed77.views.dialogosComunes.JOptionDialog;
 
@@ -25,82 +22,60 @@ import obed77.views.dialogosComunes.JOptionDialog;
  *
  * @author Saito
  */
-public class NuevoProveedor extends javax.swing.JDialog {
+public class ModificarCliente extends javax.swing.JDialog {
 
     int x, y;
 
-    public NuevoProveedor(java.awt.Frame parent, boolean modal) {
+    public ModificarCliente(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        limpiar();
+        cargar();
 
     }
 
-    private void limpiar() {
-        cargarComboTipoDocumento();
-        txtDocumento.setText("");
-        txtNombre.setText("");
-        txtContacto.setText("");
-        txtTelefono.setText("");
-        txtCorreo.setText("");
-        txtDireccion.setText("");
-        btnCrear.setEnabled(false);
+    private void cargar() {
+        int fsel = PanelCliente.tablaClientes.getSelectedRow();
+        txtTipoDoc.setText(PanelCliente.tablaClientes.getValueAt(fsel, 0).toString());
+        txtDocumento.setText(PanelCliente.tablaClientes.getValueAt(fsel, 1).toString());
+        txtNombre.setText(PanelCliente.tablaClientes.getValueAt(fsel, 2).toString());
+        txtTelefono.setText(PanelCliente.tablaClientes.getValueAt(fsel, 3).toString());
+        txtCorreo.setText(PanelCliente.tablaClientes.getValueAt(fsel, 4).toString());
+        txtDireccion.setText(PanelCliente.tablaClientes.getValueAt(fsel, 5).toString());
+        btnModificar.setEnabled(false);
+        txtNombre.grabFocus();
     }
     
-    private void validarCrear(){
-        if(txtDocumento.getText().isEmpty() || txtNombre.getText().isEmpty() || txtContacto.getText().isEmpty()  
+    private void validarModificar(){
+        if(txtDocumento.getText().isEmpty() || txtNombre.getText().isEmpty()
                 || txtTelefono.getText().isEmpty() || txtCorreo.getText().isEmpty() || txtDireccion.getText().isEmpty()
-                || cboTipoDocumento.getSelectedItem().toString().isEmpty()){
-            btnCrear.setEnabled(false);
+               ){
+            btnModificar.setEnabled(false);
         }else{
-            btnCrear.setEnabled(true);
+            btnModificar.setEnabled(true);
         }
     }
 
-    private void cargarComboTipoDocumento() {
-        try {
-            DefaultComboBoxModel combo = new DefaultComboBoxModel();
-            ProveedorSession provSession = new ProveedorSession();
-            ArrayList<TipoDocumentoTo> tos = provSession.getTiposDocumentosCombo();
-            cboTipoDocumento.removeAllItems();
-            for (TipoDocumentoTo to : tos) {
-                combo.addElement(to.getTipo());
-            }
-            cboTipoDocumento.setModel(combo);
 
-        } catch (SQLException ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), ""), "Proveedores", JOptionDialog.INFORMACION_ICON);
-        } catch (ClassNotFoundException ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Proveedores", JOptionDialog.INFORMACION_ICON);
-        } catch (Exception ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR: " + ex.getMessage());
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Proveedores", JOptionDialog.INFORMACION_ICON);
-        }
-    }
-    
-    private void crearProveedor() {
-        ProveedorTo to = new ProveedorTo();
+    private void modificarCliente() {
+        ClienteTo to = new ClienteTo();
         try {
-            to.setTipoDocumento(cboTipoDocumento.getSelectedItem().toString());
+            to.setTipoDocumento(txtTipoDoc.getText());
             to.setDocumento(txtDocumento.getText());
             to.setNombre(txtNombre.getText());
-            to.setContacto(txtContacto.getText());
             to.setTelefono(txtTelefono.getText());
             to.setCorreo(txtCorreo.getText());
             to.setDireccion(txtDireccion.getText());
-            ProveedorSession session = new ProveedorSession();
-            session.insertarProveedor(to);
-            JOptionDialog.showMessageDialog(this, "Proveedor creado correctamente", "Proveedores", JOptionDialog.INFORMACION_ICON);
-            PanelProveedor.cargar();
+            ClienteSession session = new ClienteSession();
+            session.modificarCliente(to);
+            JOptionDialog.showMessageDialog(this, "Cliente modificado correctamente", "Clientes", JOptionDialog.INFORMACION_ICON);
+            PanelCliente.cargar();
             this.dispose();
         } catch (SQLException ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), to.getNombre()), "Proveedores", JOptionDialog.INFORMACION_ICON);
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), to.getNombre()), "Clientes", JOptionDialog.INFORMACION_ICON);
         } catch (Exception ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR: " + ex.getMessage());
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Proveedores", JOptionDialog.INFORMACION_ICON);
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Clientes", JOptionDialog.INFORMACION_ICON);
         }
     }
 
@@ -118,21 +93,19 @@ public class NuevoProveedor extends javax.swing.JDialog {
         header = new javax.swing.JLabel();
         panelImage1 = new org.edisoncor.gui.panel.PanelImage();
         jLabel1 = new javax.swing.JLabel();
-        btnCrear = new javax.swing.JButton();
+        btnModificar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDireccion = new javax.swing.JTextArea();
-        cboTipoDocumento = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         txtDocumento = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        txtContacto = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         txtCorreo = new javax.swing.JTextField();
+        txtTipoDoc = new javax.swing.JTextField();
         txtTelefono = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -147,7 +120,7 @@ public class NuevoProveedor extends javax.swing.JDialog {
 
         header.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         header.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        header.setText("Nuevo Proveedor");
+        header.setText("Modificar Proveedor");
         header.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         header.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
@@ -179,27 +152,26 @@ public class NuevoProveedor extends javax.swing.JDialog {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("Dirección: ");
 
-        btnCrear.setBackground(new java.awt.Color(255, 255, 255));
-        btnCrear.setText("Crear");
-        btnCrear.setBorderPainted(false);
-        btnCrear.setContentAreaFilled(false);
-        btnCrear.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnCrear.setEnabled(false);
-        btnCrear.setMaximumSize(new java.awt.Dimension(110, 25));
-        btnCrear.setMinimumSize(new java.awt.Dimension(110, 25));
-        btnCrear.setOpaque(true);
-        btnCrear.setPreferredSize(new java.awt.Dimension(110, 25));
-        btnCrear.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnModificar.setBackground(new java.awt.Color(255, 255, 255));
+        btnModificar.setText("Modificar");
+        btnModificar.setBorderPainted(false);
+        btnModificar.setContentAreaFilled(false);
+        btnModificar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnModificar.setMaximumSize(new java.awt.Dimension(110, 25));
+        btnModificar.setMinimumSize(new java.awt.Dimension(110, 25));
+        btnModificar.setOpaque(true);
+        btnModificar.setPreferredSize(new java.awt.Dimension(110, 25));
+        btnModificar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnCrearMouseEntered(evt);
+                btnModificarMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnCrearMouseExited(evt);
+                btnModificarMouseExited(evt);
             }
         });
-        btnCrear.addActionListener(new java.awt.event.ActionListener() {
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCrearActionPerformed(evt);
+                btnModificarActionPerformed(evt);
             }
         });
 
@@ -246,19 +218,12 @@ public class NuevoProveedor extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(txtDireccion);
 
-        cboTipoDocumento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CI", "RIF", "NIT" }));
-        cboTipoDocumento.setBorder(null);
-        cboTipoDocumento.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        cboTipoDocumento.addItemListener(new java.awt.event.ItemListener() {
-            public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                cboTipoDocumentoItemStateChanged(evt);
-            }
-        });
-
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel3.setText("Número:");
+        jLabel3.setText("Número");
 
+        txtDocumento.setEditable(false);
+        txtDocumento.setFocusable(false);
         txtDocumento.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtDocumentoKeyReleased(evt);
@@ -272,16 +237,6 @@ public class NuevoProveedor extends javax.swing.JDialog {
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNombreKeyReleased(evt);
-            }
-        });
-
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel5.setText("Contacto:");
-
-        txtContacto.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtContactoKeyReleased(evt);
             }
         });
 
@@ -299,6 +254,14 @@ public class NuevoProveedor extends javax.swing.JDialog {
             }
         });
 
+        txtTipoDoc.setEditable(false);
+        txtTipoDoc.setFocusable(false);
+        txtTipoDoc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTipoDocKeyReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelImage1Layout = new javax.swing.GroupLayout(panelImage1);
         panelImage1.setLayout(panelImage1Layout);
         panelImage1Layout.setHorizontalGroup(
@@ -313,11 +276,10 @@ public class NuevoProveedor extends javax.swing.JDialog {
                             .addGroup(panelImage1Layout.createSequentialGroup()
                                 .addGap(3, 3, 3)
                                 .addComponent(jLabel1))
-                            .addComponent(jLabel5)
                             .addComponent(jLabel6)
                             .addGroup(panelImage1Layout.createSequentialGroup()
                                 .addGap(47, 47, 47)
-                                .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(47, 47, 47))
@@ -325,22 +287,22 @@ public class NuevoProveedor extends javax.swing.JDialog {
                         .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtNombre)
-                            .addComponent(txtContacto)
                             .addComponent(txtCorreo)
                             .addComponent(jScrollPane1)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelImage1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
+                                .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2))
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelImage1Layout.createSequentialGroup()
-                                .addComponent(cboTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtDocumento)))
+                                .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(panelImage1Layout.createSequentialGroup()
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(txtDocumento))))
                         .addContainerGap())))
         );
 
-        panelImage1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCancelar, btnCrear});
+        panelImage1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCancelar, btnModificar});
 
         panelImage1Layout.setVerticalGroup(
             panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -351,16 +313,12 @@ public class NuevoProveedor extends javax.swing.JDialog {
                     .addComponent(jLabel3))
                 .addGap(4, 4, 4)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addGap(4, 4, 4)
                 .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtContacto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -376,11 +334,11 @@ public class NuevoProveedor extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCrear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnModificar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17))
         );
 
-        panelImage1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnCancelar, btnCrear});
+        panelImage1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnCancelar, btnModificar});
 
         javax.swing.GroupLayout PanelLayout = new javax.swing.GroupLayout(Panel);
         Panel.setLayout(PanelLayout);
@@ -426,17 +384,17 @@ public class NuevoProveedor extends javax.swing.JDialog {
         y = evt.getY();         // TODO add your handling code here:
     }//GEN-LAST:event_headerMousePressed
 
-    private void btnCrearMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCrearMouseEntered
-        btnCrear.setBackground(Utilidades.getColorEntered());        // TODO add your handling code here:
-    }//GEN-LAST:event_btnCrearMouseEntered
+    private void btnModificarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModificarMouseEntered
+        btnModificar.setBackground(Utilidades.getColorEntered());        // TODO add your handling code here:
+    }//GEN-LAST:event_btnModificarMouseEntered
 
-    private void btnCrearMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCrearMouseExited
-        btnCrear.setBackground(Utilidades.getColorNormalMenu()); // TODO add your handling code here:
-    }//GEN-LAST:event_btnCrearMouseExited
+    private void btnModificarMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnModificarMouseExited
+        btnModificar.setBackground(Utilidades.getColorNormalMenu()); // TODO add your handling code here:
+    }//GEN-LAST:event_btnModificarMouseExited
 
-    private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
-        crearProveedor();           // TODO add your handling code here:
-    }//GEN-LAST:event_btnCrearActionPerformed
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        modificarCliente();           // TODO add your handling code here:
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnCancelarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarMouseEntered
         btnCancelar.setBackground(Utilidades.getColorEntered());// TODO add your handling code here:
@@ -453,7 +411,7 @@ public class NuevoProveedor extends javax.swing.JDialog {
     private void txtDireccionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDireccionKeyReleased
         String texto = txtDireccion.getText().toUpperCase();
         txtDireccion.setText(texto);
-        validarCrear();// TODO add your handling code here:
+        validarModificar();// TODO add your handling code here:
     }//GEN-LAST:event_txtDireccionKeyReleased
 
     private void txtDireccionKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDireccionKeyTyped
@@ -462,33 +420,27 @@ public class NuevoProveedor extends javax.swing.JDialog {
         }        // TODO add your handling code here:
     }//GEN-LAST:event_txtDireccionKeyTyped
 
-    private void cboTipoDocumentoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboTipoDocumentoItemStateChanged
-      validarCrear();
-    }//GEN-LAST:event_cboTipoDocumentoItemStateChanged
-
     private void txtDocumentoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDocumentoKeyReleased
         String texto = txtDocumento.getText().toUpperCase();
         txtDocumento.setText(texto);
-        validarCrear();        // TODO add your handling code here:
+        validarModificar();        // TODO add your handling code here:
     }//GEN-LAST:event_txtDocumentoKeyReleased
 
     private void txtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyReleased
         String texto = txtNombre.getText().toUpperCase();
         txtNombre.setText(texto);
-        validarCrear();        // TODO add your handling code here:
+        validarModificar();        // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreKeyReleased
-
-    private void txtContactoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtContactoKeyReleased
-        String texto = txtContacto.getText().toUpperCase();
-        txtContacto.setText(texto);
-        validarCrear();        // TODO add your handling code here:
-    }//GEN-LAST:event_txtContactoKeyReleased
 
     private void txtCorreoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCorreoKeyReleased
         String texto = txtCorreo.getText().toUpperCase();
         txtCorreo.setText(texto);
-        validarCrear();        // TODO add your handling code here:
+        validarModificar();        // TODO add your handling code here:
     }//GEN-LAST:event_txtCorreoKeyReleased
+
+    private void txtTipoDocKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTipoDocKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTipoDocKeyReleased
 
     /**
      * @param args the command line arguments
@@ -507,22 +459,27 @@ public class NuevoProveedor extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NuevoProveedor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ModificarCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NuevoProveedor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ModificarCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NuevoProveedor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ModificarCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NuevoProveedor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ModificarCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
             public void run() {
-                NuevoProveedor dialog = new NuevoProveedor(new javax.swing.JFrame(), true);
+                ModificarCliente dialog = new ModificarCliente(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -537,25 +494,23 @@ public class NuevoProveedor extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Panel;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCrear;
-    private javax.swing.JComboBox<String> cboTipoDocumento;
+    private javax.swing.JButton btnModificar;
     private javax.swing.JLabel header;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private javax.swing.JPanel panelTop;
-    private javax.swing.JTextField txtContacto;
     private javax.swing.JTextField txtCorreo;
     private javax.swing.JTextArea txtDireccion;
     private javax.swing.JTextField txtDocumento;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtTelefono;
+    private javax.swing.JTextField txtTipoDoc;
     // End of variables declaration//GEN-END:variables
 
 }

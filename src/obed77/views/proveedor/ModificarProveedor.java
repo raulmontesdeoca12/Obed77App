@@ -48,7 +48,7 @@ public class ModificarProveedor extends javax.swing.JDialog {
     
     private void validarModificar(){
         if(txtDocumento.getText().isEmpty() || txtNombre.getText().isEmpty() || txtContacto.getText().isEmpty()  
-                || txtTelefono.getText().equals("(    )-       ") || txtCorreo.getText().isEmpty() || txtDireccion.getText().isEmpty()
+                || txtTelefono.getText().isEmpty() || txtCorreo.getText().isEmpty() || txtDireccion.getText().isEmpty()
                ){
             btnModificar.setEnabled(false);
         }else{
@@ -69,7 +69,7 @@ public class ModificarProveedor extends javax.swing.JDialog {
             to.setDireccion(txtDireccion.getText());
             ProveedorSession session = new ProveedorSession();
             session.modificarProveedor(to);
-            JOptionDialog.showMessageDialog(this, "Proveedor modificar correctamente", "Proveedores", JOptionDialog.INFORMACION_ICON);
+            JOptionDialog.showMessageDialog(this, "Proveedor modificado correctamente", "Proveedores", JOptionDialog.INFORMACION_ICON);
             PanelProveedor.cargar();
             this.dispose();
         } catch (SQLException ex) {
@@ -108,9 +108,9 @@ public class ModificarProveedor extends javax.swing.JDialog {
         txtContacto = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txtTelefono = new javax.swing.JFormattedTextField();
         txtCorreo = new javax.swing.JTextField();
         txtTipoDoc = new javax.swing.JTextField();
+        txtTelefono = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setModal(true);
@@ -204,7 +204,7 @@ public class ModificarProveedor extends javax.swing.JDialog {
 
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel2.setText("Tip.Documento: ");
+        jLabel2.setText("Documento:");
 
         txtDireccion.setColumns(20);
         txtDireccion.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
@@ -224,7 +224,7 @@ public class ModificarProveedor extends javax.swing.JDialog {
 
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jLabel3.setText("Documento:");
+        jLabel3.setText("Número");
 
         txtDocumento.setEditable(false);
         txtDocumento.setFocusable(false);
@@ -262,17 +262,6 @@ public class ModificarProveedor extends javax.swing.JDialog {
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel7.setText("Correo:");
 
-        try {
-            txtTelefono.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("(####)-#######")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtTelefono.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtTelefonoKeyReleased(evt);
-            }
-        });
-
         txtCorreo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtCorreoKeyReleased(evt);
@@ -309,25 +298,24 @@ public class ModificarProveedor extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(47, 47, 47))
-                    .addGroup(panelImage1Layout.createSequentialGroup()
-                        .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtContacto, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtCorreo, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(panelImage1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(panelImage1Layout.createSequentialGroup()
-                                .addComponent(txtTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelImage1Layout.createSequentialGroup()
+                        .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtNombre)
+                            .addComponent(txtContacto)
+                            .addComponent(txtCorreo)
+                            .addComponent(jScrollPane1)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelImage1Layout.createSequentialGroup()
+                                .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2))
                                 .addGap(18, 18, 18)
-                                .addComponent(txtDocumento)))
-                        .addContainerGap())
-                    .addGroup(panelImage1Layout.createSequentialGroup()
-                        .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                                .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(panelImage1Layout.createSequentialGroup()
+                                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))
+                                    .addComponent(txtDocumento))))
+                        .addContainerGap())))
         );
 
         panelImage1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnCancelar, btnModificar});
@@ -470,10 +458,6 @@ public class ModificarProveedor extends javax.swing.JDialog {
         validarModificar();        // TODO add your handling code here:
     }//GEN-LAST:event_txtContactoKeyReleased
 
-    private void txtTelefonoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTelefonoKeyReleased
-    validarModificar();        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTelefonoKeyReleased
-
     private void txtCorreoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCorreoKeyReleased
         String texto = txtCorreo.getText().toUpperCase();
         txtCorreo.setText(texto);
@@ -549,7 +533,7 @@ public class ModificarProveedor extends javax.swing.JDialog {
     private javax.swing.JTextArea txtDireccion;
     private javax.swing.JTextField txtDocumento;
     private javax.swing.JTextField txtNombre;
-    private javax.swing.JFormattedTextField txtTelefono;
+    private javax.swing.JTextField txtTelefono;
     private javax.swing.JTextField txtTipoDoc;
     // End of variables declaration//GEN-END:variables
 

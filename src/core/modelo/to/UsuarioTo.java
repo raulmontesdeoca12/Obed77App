@@ -107,30 +107,26 @@ public class UsuarioTo {
 
 
     public boolean isMenuVentas() {
-        return false; //(isUserInRol(Roles.AdminApp));
+        return isUserInRol(Roles.ROL_ADMIN) || isUserInRol(Roles.ROL_VENTAS);
     }
 
     public boolean isMenuProductos() {
-        return true; //(isUserInRol(Roles.AdminApp));
+        return isUserInRol(Roles.ROL_ADMIN) || isUserInRol(Roles.ROL_PRODUCTOS); 
     }
 
     public boolean isMenuClientes() {
-        return false;//(isUserInRol(Roles.AdminApp));
+        return isUserInRol(Roles.ROL_ADMIN) || isUserInRol(Roles.ROL_CLIENTES); 
     }
 
     public boolean isMenuCompras() {
-        return true; //(isUserInRol(Roles.AdminApp));
+       return isUserInRol(Roles.ROL_ADMIN) || isUserInRol(Roles.ROL_COMPRAS); 
     }
 
     public boolean isMenuProveedores() {
         return isUserInRol(Roles.ROL_ADMIN) || isUserInRol(Roles.ROL_PROVEEDORES);
     }
 
-    public boolean isMenuEmpleados() {
-        return false;//(isUserInRol(Roles.AdminApp));
-    }
-
     public boolean isMenuConfiguracion() {
-        return true;//(isUserInRol(Roles.AdminApp));
+        return isUserInRol(Roles.ROL_ADMIN) || isUserInRol(Roles.ROL_CONFIG);
     }
 }

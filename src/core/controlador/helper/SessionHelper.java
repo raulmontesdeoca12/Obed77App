@@ -131,7 +131,6 @@ public class SessionHelper {
         Principal.labNombreEmpleado.setText(user.getEmpleado().getNombreCompleto());
         Principal.labCargo.setText(user.getEmpleado().getCargo());
         Principal.labUltimaConexion.setText(user.getUltimaConexion());
-        Principal.panelHome.setVisible(true);
         Principal.panelBody.remove(Principal.panelInicial);
         Principal.panelBody.repaint();
         Principal.panelBody.add(Principal.panelPrincipalBotones, BorderLayout.NORTH, 1);
@@ -148,9 +147,10 @@ public class SessionHelper {
         //Validamos lso roles y habilitamos los respectivos menus y botones
         //Principal
         Principal.btnPrincipalClientes.setVisible(user.isMenuClientes());
-        Principal.btnPrincipalEmpleados.setVisible(user.isMenuEmpleados());
         Principal.btnPrincipalProductos.setVisible(user.isMenuProductos());
         Principal.btnPrincipalProveedores.setVisible(user.isMenuProveedores());
+        Principal.btnPrincipalCompras.setVisible(user.isMenuCompras());
+        Principal.btnPrincipalVentas.setVisible(user.isMenuVentas());
         
         
         
@@ -177,16 +177,10 @@ public class SessionHelper {
         
         
         
-        
         //Proveedores
         Principal.pProveedores.setVisible(user.isMenuProveedores());
         
                 
-        
-        //Empleados
-        Principal.pEmpleados.setVisible(user.isMenuEmpleados());
-        
-        
         
         //Configuracion
         Principal.pConfiguracion.setVisible(user.isMenuConfiguracion());
@@ -197,13 +191,9 @@ public class SessionHelper {
     
    public void cerrarSesion(){
         Principal.multiPanel.removeAll();
-        Principal.multiPanel.add(Principal.panelHome);
-        ImageIcon icon = createImageIcon("/Imagenes/icono_home_mini.png");
-        Principal.multiPanel.setIconAt(0, icon);
         Principal.labNombreEmpleado.setText("");
         Principal.labCargo.setText("");
         Principal.labUltimaConexion.setText("");
-        Principal.panelHome.setVisible(true);
         Principal.panelBody.remove(Principal.panelIniciado);
         Principal.panelBody.repaint();
         Principal.panelBody.remove(1);
@@ -221,7 +211,6 @@ public class SessionHelper {
         
         //Principal
         Principal.btnPrincipalClientes.setVisible(false);
-        Principal.btnPrincipalEmpleados.setVisible(false);
         Principal.btnPrincipalProductos.setVisible(false);
         Principal.btnPrincipalProveedores.setVisible(false);
         

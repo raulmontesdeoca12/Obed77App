@@ -12,8 +12,11 @@ package core.controlador.principal;
 public class Roles {
         public static String ROL_ADMIN = "ROL_ADMIN";
         public static String ROL_PROVEEDORES = "ROL_PROVEEDORES";
-        public static String ROL_ADMINISTRAR_PROVEEDORES = "ROL_ADMINISTRAR_PROVEEDORES";
         public static String ROL_PRODUCTOS = "ROL_PRODUCTOS";
+        public static String ROL_VENTAS = "ROL_VENTAS";
+        public static String ROL_CLIENTES = "ROL_CLIENTES";
+        public static String ROL_COMPRAS = "ROL_COMPRAS";
+        public static String ROL_CONFIG = "ROL_CONFIG";
         
         int id;
         String roleName;

@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
+import obed77.views.cliente.PanelCliente;
 import obed77.views.compras.PanelCompras;
 import obed77.views.dialogosComunes.JOptionDialog;
 import obed77.views.producto.PanelCategoria;
@@ -53,7 +54,7 @@ public class Principal extends javax.swing.JFrame {
     public static UsuarioTo getUsuarioPrincipal() {
         return usuarioTo;
     }
-    
+
     private void setConfig() {
         this.setTitle("Principal - " + Configuraciones.nombreApp);
         panelBody.add(panelInicial, BorderLayout.SOUTH, 1);
@@ -64,8 +65,6 @@ public class Principal extends javax.swing.JFrame {
         pProveedores.setVisible(false);
         pEmpleados.setVisible(false);
         pConfiguracion.setVisible(false);
-
-        panelHome.setVisible(false);
         txtUser.grabFocus();
         String pass = DigestUtils.md5Hex("*1234Abcd");
         HiloIniciando hilo = new HiloIniciando("admin", pass);
@@ -129,11 +128,12 @@ public class Principal extends javax.swing.JFrame {
         hilo.start();
     }
 
-    
+
 
 
     /**
-     * ********************* Metodos para la creación de los paneles *********************
+     * ********************* Metodos para la creación de los paneles
+     * *********************
      */
 
     public void CrearPanelProducto() {
@@ -149,7 +149,7 @@ public class Principal extends javax.swing.JFrame {
             JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
         }
     }
-    
+
     public void CrearPanelCategorias() {
         LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelCategorias");
         String titulo = "   Categorias   ";
@@ -163,7 +163,7 @@ public class Principal extends javax.swing.JFrame {
             JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
         }
     }
-    
+
     public void CrearPanelProveedores() {
         LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelProveedores");
         String titulo = "   Proveedores   ";
@@ -177,8 +177,8 @@ public class Principal extends javax.swing.JFrame {
             JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
         }
     }
-    
-     public void CrearPanelCompras() {
+
+    public void CrearPanelCompras() {
         LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelCompras");
         String titulo = "   Compras   ";
         int index = multiPanel.indexOfTab(titulo);
@@ -190,6 +190,22 @@ public class Principal extends javax.swing.JFrame {
         } else {
             JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
         }
+
+    }
+
+    public void CrearPanelCliente() {
+        LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelCliente");
+        String titulo = "   Clientes   ";
+        int index = multiPanel.indexOfTab(titulo);
+        if (index == -1) {
+            PanelCliente panel = new PanelCliente();
+            multiPanel.addTab(titulo, panel);
+            int i = multiPanel.indexOfTab(titulo);
+            multiPanel.setSelectedIndex(i);
+        } else {
+            JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
+        }
+
     }
 
     /**
@@ -232,17 +248,13 @@ public class Principal extends javax.swing.JFrame {
         btnPrincipalProductos = new javax.swing.JButton();
         btnPrincipalProveedores = new javax.swing.JButton();
         btnPrincipalClientes = new javax.swing.JButton();
-        btnPrincipalEmpleados = new javax.swing.JButton();
+        btnPrincipalCompras = new javax.swing.JButton();
+        btnPrincipalVentas = new javax.swing.JButton();
         grupoMenu = new javax.swing.ButtonGroup();
         menuVentas = new javax.swing.JPopupMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
-        subMenCotizacion = new javax.swing.JMenu();
-        menuListarCotizaciones = new javax.swing.JMenuItem();
-        menuCotizar = new javax.swing.JMenuItem();
-        subMenuFacturacion = new javax.swing.JMenu();
-        menuListarFacturas = new javax.swing.JMenuItem();
-        menuFacturar = new javax.swing.JMenuItem();
+        menuListarVentas = new javax.swing.JMenuItem();
         subMenReportesVentas = new javax.swing.JMenu();
         menuReporte1Ventas = new javax.swing.JMenuItem();
         menuReporte2Ventas = new javax.swing.JMenuItem();
@@ -251,34 +263,18 @@ public class Principal extends javax.swing.JFrame {
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         menuListarProductos = new javax.swing.JMenuItem();
         menuCategoriasProducto = new javax.swing.JMenuItem();
-        menuAgregarProducto = new javax.swing.JMenuItem();
-        subMenReportesProductos = new javax.swing.JMenu();
-        menuReporte1Productos = new javax.swing.JMenuItem();
-        menuReporte2Productos = new javax.swing.JMenuItem();
         menuClientes = new javax.swing.JPopupMenu();
         jMenuItem5 = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         menuListarClientes = new javax.swing.JMenuItem();
-        menuAgregarCliente = new javax.swing.JMenuItem();
-        subMenReportesClientes = new javax.swing.JMenu();
-        menuReporte1Clientes = new javax.swing.JMenuItem();
-        menuReporte2Clientes = new javax.swing.JMenuItem();
         menuCompras = new javax.swing.JPopupMenu();
         jMenuItem6 = new javax.swing.JMenuItem();
         jSeparator6 = new javax.swing.JPopupMenu.Separator();
         menuListarCompras = new javax.swing.JMenuItem();
-        menuAgregarCompra = new javax.swing.JMenuItem();
-        subMenReportesCompras = new javax.swing.JMenu();
-        menuReporte1Compras = new javax.swing.JMenuItem();
-        menuReporte2Compras = new javax.swing.JMenuItem();
         menuProveedores = new javax.swing.JPopupMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuListarProveedores = new javax.swing.JMenuItem();
-        menuAgregarProveedor = new javax.swing.JMenuItem();
-        subMenReportesProveedores = new javax.swing.JMenu();
-        menuReporte1Proveedores = new javax.swing.JMenuItem();
-        menuReporte2Proveedores = new javax.swing.JMenuItem();
         menuEmpleados = new javax.swing.JPopupMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
@@ -299,16 +295,16 @@ public class Principal extends javax.swing.JFrame {
         btnMaximizar = new javax.swing.JButton();
         btnMinimizar = new javax.swing.JButton();
         panelMenu = new javax.swing.JPanel();
-        pVentas = new javax.swing.JPanel();
-        menVentas = new javax.swing.JButton();
         pProductos = new javax.swing.JPanel();
         menProductos = new javax.swing.JButton();
+        pProveedores = new javax.swing.JPanel();
+        menProveedores = new javax.swing.JButton();
         pClientes = new javax.swing.JPanel();
         menClientes = new javax.swing.JButton();
         pCompras = new javax.swing.JPanel();
         menCompras = new javax.swing.JButton();
-        pProveedores = new javax.swing.JPanel();
-        menProveedores = new javax.swing.JButton();
+        pVentas = new javax.swing.JPanel();
+        menVentas = new javax.swing.JButton();
         pEmpleados = new javax.swing.JPanel();
         menEmpleados = new javax.swing.JButton();
         pConfiguracion = new javax.swing.JPanel();
@@ -317,7 +313,6 @@ public class Principal extends javax.swing.JFrame {
         panelContenedorBody = new javax.swing.JPanel();
         panelBody = new org.edisoncor.gui.panel.PanelImage();
         multiPanel = new org.matrix.CustomTabbedPane();
-        panelHome = new javax.swing.JPanel();
 
         panelInicial.setMinimumSize(new java.awt.Dimension(800, 60));
         panelInicial.setOpaque(false);
@@ -756,7 +751,7 @@ public class Principal extends javax.swing.JFrame {
         panelPrincipalBotones.setOpaque(false);
 
         btnPrincipalProductos.setBackground(new java.awt.Color(174, 214, 241));
-        btnPrincipalProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_productos.png"))); // NOI18N
+        btnPrincipalProductos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_producto_40.png"))); // NOI18N
         btnPrincipalProductos.setText("Productos");
         btnPrincipalProductos.setBorderPainted(false);
         btnPrincipalProductos.setContentAreaFilled(false);
@@ -785,7 +780,7 @@ public class Principal extends javax.swing.JFrame {
         });
 
         btnPrincipalProveedores.setBackground(new java.awt.Color(174, 214, 241));
-        btnPrincipalProveedores.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_proveedores.png"))); // NOI18N
+        btnPrincipalProveedores.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_proveedores_40.png"))); // NOI18N
         btnPrincipalProveedores.setText("Proveedores");
         btnPrincipalProveedores.setBorderPainted(false);
         btnPrincipalProveedores.setContentAreaFilled(false);
@@ -814,7 +809,7 @@ public class Principal extends javax.swing.JFrame {
         });
 
         btnPrincipalClientes.setBackground(new java.awt.Color(174, 214, 241));
-        btnPrincipalClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_tipo_producto.png"))); // NOI18N
+        btnPrincipalClientes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_clientes.png"))); // NOI18N
         btnPrincipalClientes.setText("Clientes");
         btnPrincipalClientes.setBorderPainted(false);
         btnPrincipalClientes.setContentAreaFilled(false);
@@ -842,32 +837,56 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        btnPrincipalEmpleados.setBackground(new java.awt.Color(174, 214, 241));
-        btnPrincipalEmpleados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/incono_productos_es.png"))); // NOI18N
-        btnPrincipalEmpleados.setText("Empleados");
-        btnPrincipalEmpleados.setBorderPainted(false);
-        btnPrincipalEmpleados.setContentAreaFilled(false);
-        btnPrincipalEmpleados.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnPrincipalEmpleados.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnPrincipalEmpleados.setIconTextGap(1);
-        btnPrincipalEmpleados.setMaximumSize(new java.awt.Dimension(110, 75));
-        btnPrincipalEmpleados.setMinimumSize(new java.awt.Dimension(110, 75));
-        btnPrincipalEmpleados.setPreferredSize(new java.awt.Dimension(110, 75));
-        btnPrincipalEmpleados.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnPrincipalEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnPrincipalCompras.setBackground(new java.awt.Color(174, 214, 241));
+        btnPrincipalCompras.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_compras.png"))); // NOI18N
+        btnPrincipalCompras.setText("Compras");
+        btnPrincipalCompras.setBorderPainted(false);
+        btnPrincipalCompras.setContentAreaFilled(false);
+        btnPrincipalCompras.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPrincipalCompras.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPrincipalCompras.setIconTextGap(1);
+        btnPrincipalCompras.setMaximumSize(new java.awt.Dimension(110, 75));
+        btnPrincipalCompras.setMinimumSize(new java.awt.Dimension(110, 75));
+        btnPrincipalCompras.setPreferredSize(new java.awt.Dimension(110, 75));
+        btnPrincipalCompras.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPrincipalCompras.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnPrincipalEmpleadosMouseExited(evt);
+                btnPrincipalComprasMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                btnPrincipalEmpleadosMousePressed(evt);
+                btnPrincipalComprasMousePressed(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                btnPrincipalEmpleadosMouseReleased(evt);
+                btnPrincipalComprasMouseReleased(evt);
             }
         });
-        btnPrincipalEmpleados.addActionListener(new java.awt.event.ActionListener() {
+        btnPrincipalCompras.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPrincipalEmpleadosActionPerformed(evt);
+                btnPrincipalComprasActionPerformed(evt);
+            }
+        });
+
+        btnPrincipalVentas.setBackground(new java.awt.Color(174, 214, 241));
+        btnPrincipalVentas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_ventas.png"))); // NOI18N
+        btnPrincipalVentas.setText("Ventas");
+        btnPrincipalVentas.setBorderPainted(false);
+        btnPrincipalVentas.setContentAreaFilled(false);
+        btnPrincipalVentas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnPrincipalVentas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPrincipalVentas.setIconTextGap(1);
+        btnPrincipalVentas.setMaximumSize(new java.awt.Dimension(110, 75));
+        btnPrincipalVentas.setMinimumSize(new java.awt.Dimension(110, 75));
+        btnPrincipalVentas.setPreferredSize(new java.awt.Dimension(110, 75));
+        btnPrincipalVentas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPrincipalVentas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnPrincipalVentasMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                btnPrincipalVentasMousePressed(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                btnPrincipalVentasMouseReleased(evt);
             }
         });
 
@@ -876,22 +895,24 @@ public class Principal extends javax.swing.JFrame {
         panelPrincipalBotonesLayout.setHorizontalGroup(
             panelPrincipalBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPrincipalBotonesLayout.createSequentialGroup()
+                .addComponent(btnPrincipalVentas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnPrincipalProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnPrincipalClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(btnPrincipalProveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnPrincipalCompras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
-                .addComponent(btnPrincipalEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btnPrincipalProveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(277, 277, 277))
         );
         panelPrincipalBotonesLayout.setVerticalGroup(
             panelPrincipalBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelPrincipalBotonesLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(panelPrincipalBotonesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnPrincipalEmpleados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPrincipalVentas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPrincipalCompras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnPrincipalClientes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnPrincipalProveedores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnPrincipalProductos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -909,61 +930,9 @@ public class Principal extends javax.swing.JFrame {
         menuVentas.add(jMenuItem3);
         menuVentas.add(jSeparator3);
 
-        subMenCotizacion.setText("Cotización");
-        subMenCotizacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        subMenCotizacion.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        subMenCotizacion.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        subMenCotizacion.setMaximumSize(null);
-        subMenCotizacion.setMinimumSize(new java.awt.Dimension(110, 25));
-        subMenCotizacion.setPreferredSize(new java.awt.Dimension(110, 25));
-
-        menuListarCotizaciones.setText("Gestionar");
-        menuListarCotizaciones.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuListarCotizaciones.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuListarCotizaciones.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuListarCotizaciones.setMaximumSize(null);
-        menuListarCotizaciones.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuListarCotizaciones.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenCotizacion.add(menuListarCotizaciones);
-
-        menuCotizar.setText("Cotizar");
-        menuCotizar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuCotizar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuCotizar.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuCotizar.setMaximumSize(null);
-        menuCotizar.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuCotizar.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenCotizacion.add(menuCotizar);
-
-        menuVentas.add(subMenCotizacion);
-
-        subMenuFacturacion.setText("Facturación");
-        subMenuFacturacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        subMenuFacturacion.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        subMenuFacturacion.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        subMenuFacturacion.setMaximumSize(null);
-        subMenuFacturacion.setMinimumSize(new java.awt.Dimension(110, 25));
-        subMenuFacturacion.setPreferredSize(new java.awt.Dimension(110, 25));
-
-        menuListarFacturas.setText("Gestionar");
-        menuListarFacturas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuListarFacturas.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuListarFacturas.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuListarFacturas.setMaximumSize(null);
-        menuListarFacturas.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuListarFacturas.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenuFacturacion.add(menuListarFacturas);
-
-        menuFacturar.setText("Facturar");
-        menuFacturar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuFacturar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuFacturar.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuFacturar.setMaximumSize(null);
-        menuFacturar.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuFacturar.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenuFacturacion.add(menuFacturar);
-
-        menuVentas.add(subMenuFacturacion);
+        menuListarVentas.setText("Gestionar");
+        menuListarVentas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menuVentas.add(menuListarVentas);
 
         subMenReportesVentas.setText("Reportes");
         subMenReportesVentas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -973,7 +942,7 @@ public class Principal extends javax.swing.JFrame {
         subMenReportesVentas.setMinimumSize(new java.awt.Dimension(110, 25));
         subMenReportesVentas.setPreferredSize(new java.awt.Dimension(110, 25));
 
-        menuReporte1Ventas.setText("Reporte 1");
+        menuReporte1Ventas.setText("Por Mes");
         menuReporte1Ventas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         menuReporte1Ventas.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         menuReporte1Ventas.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -982,7 +951,8 @@ public class Principal extends javax.swing.JFrame {
         menuReporte1Ventas.setPreferredSize(new java.awt.Dimension(110, 25));
         subMenReportesVentas.add(menuReporte1Ventas);
 
-        menuReporte2Ventas.setText("Reporte 2");
+        menuReporte2Ventas.setText("Por Semana");
+        menuReporte2Ventas.setToolTipText("");
         menuReporte2Ventas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         menuReporte2Ventas.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         menuReporte2Ventas.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -1019,6 +989,7 @@ public class Principal extends javax.swing.JFrame {
         menuProductos.add(menuListarProductos);
 
         menuCategoriasProducto.setText("Categorias");
+        menuCategoriasProducto.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         menuCategoriasProducto.setMinimumSize(new java.awt.Dimension(110, 25));
         menuCategoriasProducto.setPreferredSize(new java.awt.Dimension(110, 25));
         menuCategoriasProducto.addActionListener(new java.awt.event.ActionListener() {
@@ -1027,43 +998,6 @@ public class Principal extends javax.swing.JFrame {
             }
         });
         menuProductos.add(menuCategoriasProducto);
-
-        menuAgregarProducto.setText("Registrar");
-        menuAgregarProducto.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuAgregarProducto.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuAgregarProducto.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuAgregarProducto.setMaximumSize(null);
-        menuAgregarProducto.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuAgregarProducto.setPreferredSize(new java.awt.Dimension(110, 25));
-        menuProductos.add(menuAgregarProducto);
-
-        subMenReportesProductos.setText("Reportes");
-        subMenReportesProductos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        subMenReportesProductos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        subMenReportesProductos.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        subMenReportesProductos.setMaximumSize(null);
-        subMenReportesProductos.setMinimumSize(new java.awt.Dimension(110, 25));
-        subMenReportesProductos.setPreferredSize(new java.awt.Dimension(110, 25));
-
-        menuReporte1Productos.setText("Reporte 1");
-        menuReporte1Productos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuReporte1Productos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuReporte1Productos.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuReporte1Productos.setMaximumSize(null);
-        menuReporte1Productos.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuReporte1Productos.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenReportesProductos.add(menuReporte1Productos);
-
-        menuReporte2Productos.setText("Reporte 2");
-        menuReporte2Productos.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuReporte2Productos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuReporte2Productos.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuReporte2Productos.setMaximumSize(null);
-        menuReporte2Productos.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuReporte2Productos.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenReportesProductos.add(menuReporte2Productos);
-
-        menuProductos.add(subMenReportesProductos);
 
         jMenuItem5.setText("Clientes");
         jMenuItem5.setEnabled(false);
@@ -1083,44 +1017,12 @@ public class Principal extends javax.swing.JFrame {
         menuListarClientes.setMaximumSize(null);
         menuListarClientes.setMinimumSize(new java.awt.Dimension(110, 25));
         menuListarClientes.setPreferredSize(new java.awt.Dimension(110, 25));
+        menuListarClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListarClientesActionPerformed(evt);
+            }
+        });
         menuClientes.add(menuListarClientes);
-
-        menuAgregarCliente.setText("Registrar");
-        menuAgregarCliente.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuAgregarCliente.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuAgregarCliente.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuAgregarCliente.setMaximumSize(null);
-        menuAgregarCliente.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuAgregarCliente.setPreferredSize(new java.awt.Dimension(110, 25));
-        menuClientes.add(menuAgregarCliente);
-
-        subMenReportesClientes.setText("Reportes");
-        subMenReportesClientes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        subMenReportesClientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        subMenReportesClientes.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        subMenReportesClientes.setMaximumSize(null);
-        subMenReportesClientes.setMinimumSize(new java.awt.Dimension(110, 25));
-        subMenReportesClientes.setPreferredSize(new java.awt.Dimension(110, 25));
-
-        menuReporte1Clientes.setText("Reporte 1");
-        menuReporte1Clientes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuReporte1Clientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuReporte1Clientes.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuReporte1Clientes.setMaximumSize(null);
-        menuReporte1Clientes.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuReporte1Clientes.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenReportesClientes.add(menuReporte1Clientes);
-
-        menuReporte2Clientes.setText("Reporte 2");
-        menuReporte2Clientes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuReporte2Clientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuReporte2Clientes.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuReporte2Clientes.setMaximumSize(null);
-        menuReporte2Clientes.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuReporte2Clientes.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenReportesClientes.add(menuReporte2Clientes);
-
-        menuClientes.add(subMenReportesClientes);
 
         jMenuItem6.setText("Compras");
         jMenuItem6.setEnabled(false);
@@ -1147,43 +1049,6 @@ public class Principal extends javax.swing.JFrame {
         });
         menuCompras.add(menuListarCompras);
 
-        menuAgregarCompra.setText("Registrar");
-        menuAgregarCompra.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuAgregarCompra.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuAgregarCompra.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuAgregarCompra.setMaximumSize(null);
-        menuAgregarCompra.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuAgregarCompra.setPreferredSize(new java.awt.Dimension(110, 25));
-        menuCompras.add(menuAgregarCompra);
-
-        subMenReportesCompras.setText("Reportes");
-        subMenReportesCompras.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        subMenReportesCompras.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        subMenReportesCompras.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        subMenReportesCompras.setMaximumSize(null);
-        subMenReportesCompras.setMinimumSize(new java.awt.Dimension(110, 25));
-        subMenReportesCompras.setPreferredSize(new java.awt.Dimension(110, 25));
-
-        menuReporte1Compras.setText("Reporte 1");
-        menuReporte1Compras.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuReporte1Compras.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuReporte1Compras.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuReporte1Compras.setMaximumSize(null);
-        menuReporte1Compras.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuReporte1Compras.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenReportesCompras.add(menuReporte1Compras);
-
-        menuReporte2Compras.setText("Reporte 2");
-        menuReporte2Compras.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuReporte2Compras.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuReporte2Compras.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuReporte2Compras.setMaximumSize(null);
-        menuReporte2Compras.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuReporte2Compras.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenReportesCompras.add(menuReporte2Compras);
-
-        menuCompras.add(subMenReportesCompras);
-
         jMenuItem1.setText("Proveedores");
         jMenuItem1.setEnabled(false);
         jMenuItem1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -1208,43 +1073,6 @@ public class Principal extends javax.swing.JFrame {
             }
         });
         menuProveedores.add(menuListarProveedores);
-
-        menuAgregarProveedor.setText("Registrar");
-        menuAgregarProveedor.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuAgregarProveedor.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuAgregarProveedor.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuAgregarProveedor.setMaximumSize(null);
-        menuAgregarProveedor.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuAgregarProveedor.setPreferredSize(new java.awt.Dimension(110, 25));
-        menuProveedores.add(menuAgregarProveedor);
-
-        subMenReportesProveedores.setText("Reportes");
-        subMenReportesProveedores.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        subMenReportesProveedores.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        subMenReportesProveedores.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        subMenReportesProveedores.setMaximumSize(null);
-        subMenReportesProveedores.setMinimumSize(new java.awt.Dimension(110, 25));
-        subMenReportesProveedores.setPreferredSize(new java.awt.Dimension(110, 25));
-
-        menuReporte1Proveedores.setText("Reporte 1");
-        menuReporte1Proveedores.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuReporte1Proveedores.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuReporte1Proveedores.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuReporte1Proveedores.setMaximumSize(null);
-        menuReporte1Proveedores.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuReporte1Proveedores.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenReportesProveedores.add(menuReporte1Proveedores);
-
-        menuReporte2Proveedores.setText("Reporte 2");
-        menuReporte2Proveedores.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menuReporte2Proveedores.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        menuReporte2Proveedores.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
-        menuReporte2Proveedores.setMaximumSize(null);
-        menuReporte2Proveedores.setMinimumSize(new java.awt.Dimension(110, 25));
-        menuReporte2Proveedores.setPreferredSize(new java.awt.Dimension(110, 25));
-        subMenReportesProveedores.add(menuReporte2Proveedores);
-
-        menuProveedores.add(subMenReportesProveedores);
 
         jMenuItem2.setText("Empleados");
         jMenuItem2.setEnabled(false);
@@ -1353,7 +1181,7 @@ public class Principal extends javax.swing.JFrame {
 
         header.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         header.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        header.setText("Principal - Obed77");
+        header.setText("Principal");
         header.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         header.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
@@ -1431,45 +1259,6 @@ public class Principal extends javax.swing.JFrame {
 
         panelMenu.setBackground(new java.awt.Color(255, 255, 255));
 
-        pVentas.setBackground(new java.awt.Color(255, 255, 255));
-        pVentas.setMaximumSize(new java.awt.Dimension(110, 28));
-        pVentas.setMinimumSize(new java.awt.Dimension(110, 28));
-        pVentas.setPreferredSize(new java.awt.Dimension(110, 28));
-
-        menVentas.setBackground(new java.awt.Color(255, 255, 255));
-        menVentas.setText("Ventas");
-        menVentas.setBorder(null);
-        menVentas.setBorderPainted(false);
-        menVentas.setContentAreaFilled(false);
-        menVentas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menVentas.setFocusable(false);
-        menVentas.setMaximumSize(new java.awt.Dimension(110, 28));
-        menVentas.setMinimumSize(new java.awt.Dimension(110, 28));
-        menVentas.setOpaque(true);
-        menVentas.setPreferredSize(new java.awt.Dimension(110, 28));
-        menVentas.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menVentasMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                menVentasMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                menVentasMouseExited(evt);
-            }
-        });
-
-        javax.swing.GroupLayout pVentasLayout = new javax.swing.GroupLayout(pVentas);
-        pVentas.setLayout(pVentasLayout);
-        pVentasLayout.setHorizontalGroup(
-            pVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        pVentasLayout.setVerticalGroup(
-            pVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
         pProductos.setBackground(new java.awt.Color(255, 255, 255));
         pProductos.setMaximumSize(new java.awt.Dimension(110, 28));
         pProductos.setMinimumSize(new java.awt.Dimension(110, 28));
@@ -1507,6 +1296,45 @@ public class Principal extends javax.swing.JFrame {
         pProductosLayout.setVerticalGroup(
             pProductosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(menProductos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pProveedores.setBackground(new java.awt.Color(255, 255, 255));
+        pProveedores.setMaximumSize(new java.awt.Dimension(110, 28));
+        pProveedores.setMinimumSize(new java.awt.Dimension(110, 28));
+        pProveedores.setPreferredSize(new java.awt.Dimension(110, 28));
+
+        menProveedores.setBackground(new java.awt.Color(255, 255, 255));
+        menProveedores.setText("Proveedores");
+        menProveedores.setBorder(null);
+        menProveedores.setBorderPainted(false);
+        menProveedores.setContentAreaFilled(false);
+        menProveedores.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menProveedores.setFocusable(false);
+        menProveedores.setMaximumSize(new java.awt.Dimension(110, 28));
+        menProveedores.setMinimumSize(new java.awt.Dimension(110, 28));
+        menProveedores.setOpaque(true);
+        menProveedores.setPreferredSize(new java.awt.Dimension(110, 28));
+        menProveedores.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                menProveedoresMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                menProveedoresMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                menProveedoresMouseExited(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pProveedoresLayout = new javax.swing.GroupLayout(pProveedores);
+        pProveedores.setLayout(pProveedoresLayout);
+        pProveedoresLayout.setHorizontalGroup(
+            pProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(menProveedores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pProveedoresLayout.setVerticalGroup(
+            pProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(menProveedores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pClientes.setBackground(new java.awt.Color(255, 255, 255));
@@ -1587,43 +1415,43 @@ public class Principal extends javax.swing.JFrame {
             .addComponent(menCompras, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        pProveedores.setBackground(new java.awt.Color(255, 255, 255));
-        pProveedores.setMaximumSize(new java.awt.Dimension(110, 28));
-        pProveedores.setMinimumSize(new java.awt.Dimension(110, 28));
-        pProveedores.setPreferredSize(new java.awt.Dimension(110, 28));
+        pVentas.setBackground(new java.awt.Color(255, 255, 255));
+        pVentas.setMaximumSize(new java.awt.Dimension(110, 28));
+        pVentas.setMinimumSize(new java.awt.Dimension(110, 28));
+        pVentas.setPreferredSize(new java.awt.Dimension(110, 28));
 
-        menProveedores.setBackground(new java.awt.Color(255, 255, 255));
-        menProveedores.setText("Proveedores");
-        menProveedores.setBorder(null);
-        menProveedores.setBorderPainted(false);
-        menProveedores.setContentAreaFilled(false);
-        menProveedores.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        menProveedores.setFocusable(false);
-        menProveedores.setMaximumSize(new java.awt.Dimension(110, 28));
-        menProveedores.setMinimumSize(new java.awt.Dimension(110, 28));
-        menProveedores.setOpaque(true);
-        menProveedores.setPreferredSize(new java.awt.Dimension(110, 28));
-        menProveedores.addMouseListener(new java.awt.event.MouseAdapter() {
+        menVentas.setBackground(new java.awt.Color(255, 255, 255));
+        menVentas.setText("Ventas");
+        menVentas.setBorder(null);
+        menVentas.setBorderPainted(false);
+        menVentas.setContentAreaFilled(false);
+        menVentas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        menVentas.setFocusable(false);
+        menVentas.setMaximumSize(new java.awt.Dimension(110, 28));
+        menVentas.setMinimumSize(new java.awt.Dimension(110, 28));
+        menVentas.setOpaque(true);
+        menVentas.setPreferredSize(new java.awt.Dimension(110, 28));
+        menVentas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                menProveedoresMouseClicked(evt);
+                menVentasMouseClicked(evt);
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                menProveedoresMouseEntered(evt);
+                menVentasMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                menProveedoresMouseExited(evt);
+                menVentasMouseExited(evt);
             }
         });
 
-        javax.swing.GroupLayout pProveedoresLayout = new javax.swing.GroupLayout(pProveedores);
-        pProveedores.setLayout(pProveedoresLayout);
-        pProveedoresLayout.setHorizontalGroup(
-            pProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menProveedores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        javax.swing.GroupLayout pVentasLayout = new javax.swing.GroupLayout(pVentas);
+        pVentas.setLayout(pVentasLayout);
+        pVentasLayout.setHorizontalGroup(
+            pVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(menVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        pProveedoresLayout.setVerticalGroup(
-            pProveedoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(menProveedores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        pVentasLayout.setVerticalGroup(
+            pVentasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(menVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pEmpleados.setBackground(new java.awt.Color(255, 255, 255));
@@ -1748,22 +1576,6 @@ public class Principal extends javax.swing.JFrame {
         panelBody.setLayout(new java.awt.BorderLayout());
 
         multiPanel.setTabUnselectedColor(new java.awt.Color(245, 245, 245));
-
-        panelHome.setOpaque(false);
-
-        javax.swing.GroupLayout panelHomeLayout = new javax.swing.GroupLayout(panelHome);
-        panelHome.setLayout(panelHomeLayout);
-        panelHomeLayout.setHorizontalGroup(
-            panelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1064, Short.MAX_VALUE)
-        );
-        panelHomeLayout.setVerticalGroup(
-            panelHomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-
-        multiPanel.addTab("", new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_home_mini.png")), panelHome); // NOI18N
-
         panelBody.add(multiPanel, java.awt.BorderLayout.CENTER);
 
         javax.swing.GroupLayout panelContenedorBodyLayout = new javax.swing.GroupLayout(panelContenedorBody);
@@ -1956,10 +1768,12 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPassKeyTyped
 
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
+        btnIniciarSesion.setBackground(Utilidades.getColorNormalMenu());
         ValidarInicioSesion();        // TODO add your handling code here:
     }//GEN-LAST:event_btnIniciarSesionActionPerformed
 
     private void btnInicialSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicialSalirActionPerformed
+        btnInicialSalir.setBackground(Utilidades.getColorNormalMenu());
         Salir();        // TODO add your handling code here:
     }//GEN-LAST:event_btnInicialSalirActionPerformed
 
@@ -1968,15 +1782,12 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnGestionarUsuarioActionPerformed
 
     private void btnIniciadoSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciadoSalirActionPerformed
+        btnIniciadoSalir.setBackground(Utilidades.getColorNormalMenu());
         Salir();        // TODO add your handling code here:
     }//GEN-LAST:event_btnIniciadoSalirActionPerformed
 
-    private void btnPrincipalEmpleadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrincipalEmpleadosActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnPrincipalEmpleadosActionPerformed
-
     private void btnPrincipalClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrincipalClientesActionPerformed
-        // TODO add your handling code here:
+        CrearPanelCliente();        // TODO add your handling code here:
     }//GEN-LAST:event_btnPrincipalClientesActionPerformed
 
     private void btnPrincipalProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrincipalProveedoresActionPerformed
@@ -2097,10 +1908,6 @@ public class Principal extends javax.swing.JFrame {
         btnPrincipalProveedores.setOpaque(true);        // TODO add your handling code here:
     }//GEN-LAST:event_btnPrincipalProveedoresMousePressed
 
-    private void btnPrincipalEmpleadosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalEmpleadosMousePressed
-        btnPrincipalEmpleados.setOpaque(true);        // TODO add your handling code here:
-    }//GEN-LAST:event_btnPrincipalEmpleadosMousePressed
-
     private void btnPrincipalProductosMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalProductosMouseReleased
         btnPrincipalProductos.setOpaque(false);   // TODO add your handling code here:
     }//GEN-LAST:event_btnPrincipalProductosMouseReleased
@@ -2113,10 +1920,6 @@ public class Principal extends javax.swing.JFrame {
         btnPrincipalProveedores.setOpaque(false);   // TODO add your handling code here:
     }//GEN-LAST:event_btnPrincipalProveedoresMouseReleased
 
-    private void btnPrincipalEmpleadosMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalEmpleadosMouseReleased
-        btnPrincipalEmpleados.setOpaque(false);    // TODO add your handling code here:
-    }//GEN-LAST:event_btnPrincipalEmpleadosMouseReleased
-
     private void btnPrincipalProductosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalProductosMouseExited
         btnPrincipalProductos.setOpaque(false);// TODO add your handling code here:
     }//GEN-LAST:event_btnPrincipalProductosMouseExited
@@ -2128,10 +1931,6 @@ public class Principal extends javax.swing.JFrame {
     private void btnPrincipalProveedoresMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalProveedoresMouseExited
         btnPrincipalProveedores.setOpaque(false);// TODO add your handling code here:
     }//GEN-LAST:event_btnPrincipalProveedoresMouseExited
-
-    private void btnPrincipalEmpleadosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalEmpleadosMouseExited
-        btnPrincipalEmpleados.setOpaque(false);// TODO add your handling code here:
-    }//GEN-LAST:event_btnPrincipalEmpleadosMouseExited
 
     private void btnCerrarSesionMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCerrarSesionMouseEntered
         btnCerrarSesion.setBackground(Utilidades.getColorEntered());        // TODO add your handling code here:
@@ -2166,6 +1965,7 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnInicialSalirMouseExited
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
+         btnCerrarSesion.setBackground(Utilidades.getColorNormalMenu());
         int opc = JOptionDialog.showConfirmDialog(this, "¿Seguro que desea cerrar la sesión?", "Cerrar Sesión", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
 
@@ -2183,12 +1983,44 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_menuCategoriasProductoActionPerformed
 
     private void menuListarProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListarProveedoresActionPerformed
-    CrearPanelProveedores();        // TODO add your handling code here:
+        CrearPanelProveedores();        // TODO add your handling code here:
     }//GEN-LAST:event_menuListarProveedoresActionPerformed
 
     private void menuListarComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListarComprasActionPerformed
-CrearPanelCompras();        // TODO add your handling code here:
+        CrearPanelCompras();        // TODO add your handling code here:
     }//GEN-LAST:event_menuListarComprasActionPerformed
+
+    private void btnPrincipalComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrincipalComprasActionPerformed
+        CrearPanelCompras();        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPrincipalComprasActionPerformed
+
+    private void btnPrincipalComprasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalComprasMouseReleased
+        btnPrincipalCompras.setOpaque(false);    // TODO add your handling code here:
+    }//GEN-LAST:event_btnPrincipalComprasMouseReleased
+
+    private void btnPrincipalComprasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalComprasMousePressed
+        btnPrincipalCompras.setOpaque(true);        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPrincipalComprasMousePressed
+
+    private void btnPrincipalComprasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalComprasMouseExited
+        btnPrincipalCompras.setOpaque(false);// TODO add your handling code here:
+    }//GEN-LAST:event_btnPrincipalComprasMouseExited
+
+    private void btnPrincipalVentasMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalVentasMouseExited
+        btnPrincipalVentas.setOpaque(false);        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPrincipalVentasMouseExited
+
+    private void btnPrincipalVentasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalVentasMousePressed
+        btnPrincipalVentas.setOpaque(true);          // TODO add your handling code here:
+    }//GEN-LAST:event_btnPrincipalVentasMousePressed
+
+    private void btnPrincipalVentasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPrincipalVentasMouseReleased
+        btnPrincipalVentas.setOpaque(false);          // TODO add your handling code here:
+    }//GEN-LAST:event_btnPrincipalVentasMouseReleased
+
+    private void menuListarClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListarClientesActionPerformed
+        CrearPanelCliente();        // TODO add your handling code here:
+    }//GEN-LAST:event_menuListarClientesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2235,9 +2067,10 @@ CrearPanelCompras();        // TODO add your handling code here:
     public static javax.swing.JButton btnMaximizar;
     private javax.swing.JButton btnMinimizar;
     public static javax.swing.JButton btnPrincipalClientes;
-    public static javax.swing.JButton btnPrincipalEmpleados;
+    public static javax.swing.JButton btnPrincipalCompras;
     public static javax.swing.JButton btnPrincipalProductos;
     public static javax.swing.JButton btnPrincipalProveedores;
+    public static javax.swing.JButton btnPrincipalVentas;
     private org.edisoncor.gui.varios.ClockDigital clockDigital1;
     private javax.swing.ButtonGroup grupoMenu;
     private javax.swing.JLabel header;
@@ -2280,11 +2113,7 @@ CrearPanelCompras();        // TODO add your handling code here:
     public static javax.swing.JButton menProductos;
     public static javax.swing.JButton menProveedores;
     public static javax.swing.JButton menVentas;
-    private javax.swing.JMenuItem menuAgregarCliente;
-    private javax.swing.JMenuItem menuAgregarCompra;
     private javax.swing.JMenuItem menuAgregarEmpleado;
-    private javax.swing.JMenuItem menuAgregarProducto;
-    private javax.swing.JMenuItem menuAgregarProveedor;
     private javax.swing.JMenuItem menuCategoriasProducto;
     private javax.swing.JPopupMenu menuClientes;
     private javax.swing.JPopupMenu menuCompras;
@@ -2292,29 +2121,18 @@ CrearPanelCompras();        // TODO add your handling code here:
     private javax.swing.JMenuItem menuConfig2;
     private javax.swing.JMenuItem menuConfig3;
     private javax.swing.JPopupMenu menuConfiguracion;
-    private javax.swing.JMenuItem menuCotizar;
     private javax.swing.JPopupMenu menuEmpleados;
-    private javax.swing.JMenuItem menuFacturar;
     private javax.swing.JMenuItem menuListarClientes;
     private javax.swing.JMenuItem menuListarCompras;
-    private javax.swing.JMenuItem menuListarCotizaciones;
     private javax.swing.JMenuItem menuListarEmpleados;
-    private javax.swing.JMenuItem menuListarFacturas;
     private javax.swing.JMenuItem menuListarProductos;
     private javax.swing.JMenuItem menuListarProveedores;
+    private javax.swing.JMenuItem menuListarVentas;
     private javax.swing.JPopupMenu menuProductos;
     private javax.swing.JPopupMenu menuProveedores;
-    private javax.swing.JMenuItem menuReporte1Clientes;
-    private javax.swing.JMenuItem menuReporte1Compras;
     private javax.swing.JMenuItem menuReporte1Empleados;
-    private javax.swing.JMenuItem menuReporte1Productos;
-    private javax.swing.JMenuItem menuReporte1Proveedores;
     private javax.swing.JMenuItem menuReporte1Ventas;
-    private javax.swing.JMenuItem menuReporte2Clientes;
-    private javax.swing.JMenuItem menuReporte2Compras;
     private javax.swing.JMenuItem menuReporte2Empleados;
-    private javax.swing.JMenuItem menuReporte2Productos;
-    private javax.swing.JMenuItem menuReporte2Proveedores;
     private javax.swing.JMenuItem menuReporte2Ventas;
     private javax.swing.JPopupMenu menuVentas;
     public static org.matrix.CustomTabbedPane multiPanel;
@@ -2327,20 +2145,13 @@ CrearPanelCompras();        // TODO add your handling code here:
     public static javax.swing.JPanel pVentas;
     public static org.edisoncor.gui.panel.PanelImage panelBody;
     private javax.swing.JPanel panelContenedorBody;
-    public static javax.swing.JPanel panelHome;
     public static javax.swing.JPanel panelIniciado;
     public static javax.swing.JPanel panelInicial;
     private javax.swing.JPanel panelMenu;
     public static javax.swing.JPanel panelPrincipalBotones;
     private javax.swing.JPanel panelTop;
-    private javax.swing.JMenu subMenCotizacion;
-    private javax.swing.JMenu subMenReportesClientes;
-    private javax.swing.JMenu subMenReportesCompras;
     private javax.swing.JMenu subMenReportesEmpleados;
-    private javax.swing.JMenu subMenReportesProductos;
-    private javax.swing.JMenu subMenReportesProveedores;
     private javax.swing.JMenu subMenReportesVentas;
-    private javax.swing.JMenu subMenuFacturacion;
     public static javax.swing.JPasswordField txtPass;
     public static javax.swing.JTextField txtUser;
     // End of variables declaration//GEN-END:variables

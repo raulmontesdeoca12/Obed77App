@@ -3,19 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package obed77.views.proveedor;
+package obed77.views.cliente;
 
 import core.controlador.principal.ErroresMap;
 import core.controlador.principal.Utilidades;
-import core.controlador.session.ProveedorSession;
+import core.controlador.session.ClienteSession;
 import core.logger.LogService;
-import core.modelo.to.ProveedorTo;
-import core.modelo.to.TipoDocumentoTo;
+import core.modelo.to.ClienteTo;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import javax.swing.DefaultComboBoxModel;
 import obed77.Principal;
 import obed77.views.dialogosComunes.JOptionDialog;
 
@@ -25,11 +22,11 @@ import obed77.views.dialogosComunes.JOptionDialog;
  *
  * @author Saito
  */
-public class NuevoProveedor extends javax.swing.JDialog {
+public class NuevoCliente extends javax.swing.JDialog {
 
     int x, y;
 
-    public NuevoProveedor(java.awt.Frame parent, boolean modal) {
+    public NuevoCliente(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         limpiar();
@@ -37,10 +34,8 @@ public class NuevoProveedor extends javax.swing.JDialog {
     }
 
     private void limpiar() {
-        cargarComboTipoDocumento();
         txtDocumento.setText("");
         txtNombre.setText("");
-        txtContacto.setText("");
         txtTelefono.setText("");
         txtCorreo.setText("");
         txtDireccion.setText("");
@@ -48,8 +43,8 @@ public class NuevoProveedor extends javax.swing.JDialog {
     }
     
     private void validarCrear(){
-        if(txtDocumento.getText().isEmpty() || txtNombre.getText().isEmpty() || txtContacto.getText().isEmpty()  
-                || txtTelefono.getText().isEmpty() || txtCorreo.getText().isEmpty() || txtDireccion.getText().isEmpty()
+        if(txtDocumento.getText().isEmpty() || txtNombre.getText().isEmpty() || 
+           txtTelefono.getText().isEmpty() || txtCorreo.getText().isEmpty() || txtDireccion.getText().isEmpty()
                 || cboTipoDocumento.getSelectedItem().toString().isEmpty()){
             btnCrear.setEnabled(false);
         }else{
@@ -57,50 +52,27 @@ public class NuevoProveedor extends javax.swing.JDialog {
         }
     }
 
-    private void cargarComboTipoDocumento() {
-        try {
-            DefaultComboBoxModel combo = new DefaultComboBoxModel();
-            ProveedorSession provSession = new ProveedorSession();
-            ArrayList<TipoDocumentoTo> tos = provSession.getTiposDocumentosCombo();
-            cboTipoDocumento.removeAllItems();
-            for (TipoDocumentoTo to : tos) {
-                combo.addElement(to.getTipo());
-            }
-            cboTipoDocumento.setModel(combo);
-
-        } catch (SQLException ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), ""), "Proveedores", JOptionDialog.INFORMACION_ICON);
-        } catch (ClassNotFoundException ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Proveedores", JOptionDialog.INFORMACION_ICON);
-        } catch (Exception ex) {
-            LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR: " + ex.getMessage());
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Proveedores", JOptionDialog.INFORMACION_ICON);
-        }
-    }
-    
-    private void crearProveedor() {
-        ProveedorTo to = new ProveedorTo();
+   
+    private void crearCliente() {
+        ClienteTo to = new ClienteTo();
         try {
             to.setTipoDocumento(cboTipoDocumento.getSelectedItem().toString());
             to.setDocumento(txtDocumento.getText());
             to.setNombre(txtNombre.getText());
-            to.setContacto(txtContacto.getText());
             to.setTelefono(txtTelefono.getText());
             to.setCorreo(txtCorreo.getText());
             to.setDireccion(txtDireccion.getText());
-            ProveedorSession session = new ProveedorSession();
-            session.insertarProveedor(to);
-            JOptionDialog.showMessageDialog(this, "Proveedor creado correctamente", "Proveedores", JOptionDialog.INFORMACION_ICON);
-            PanelProveedor.cargar();
+            ClienteSession session = new ClienteSession();
+            session.insertarCliente(to);
+            JOptionDialog.showMessageDialog(this, "Cliente creado correctamente", "Clientes", JOptionDialog.INFORMACION_ICON);
+            PanelCliente.cargar();
             this.dispose();
         } catch (SQLException ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), to.getNombre()), "Proveedores", JOptionDialog.INFORMACION_ICON);
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), to.getNombre()), "Clientes", JOptionDialog.INFORMACION_ICON);
         } catch (Exception ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR: " + ex.getMessage());
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Proveedores", JOptionDialog.INFORMACION_ICON);
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Clientes", JOptionDialog.INFORMACION_ICON);
         }
     }
 
@@ -128,8 +100,6 @@ public class NuevoProveedor extends javax.swing.JDialog {
         txtDocumento = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        txtContacto = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         txtCorreo = new javax.swing.JTextField();
@@ -147,7 +117,7 @@ public class NuevoProveedor extends javax.swing.JDialog {
 
         header.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         header.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        header.setText("Nuevo Proveedor");
+        header.setText("Nuevo Cliente");
         header.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         header.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseDragged(java.awt.event.MouseEvent evt) {
@@ -246,7 +216,7 @@ public class NuevoProveedor extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(txtDireccion);
 
-        cboTipoDocumento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CI", "RIF", "NIT" }));
+        cboTipoDocumento.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DNI", "RUC", "CEDULA" }));
         cboTipoDocumento.setBorder(null);
         cboTipoDocumento.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cboTipoDocumento.addItemListener(new java.awt.event.ItemListener() {
@@ -272,16 +242,6 @@ public class NuevoProveedor extends javax.swing.JDialog {
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNombreKeyReleased(evt);
-            }
-        });
-
-        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel5.setText("Contacto:");
-
-        txtContacto.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtContactoKeyReleased(evt);
             }
         });
 
@@ -313,7 +273,6 @@ public class NuevoProveedor extends javax.swing.JDialog {
                             .addGroup(panelImage1Layout.createSequentialGroup()
                                 .addGap(3, 3, 3)
                                 .addComponent(jLabel1))
-                            .addComponent(jLabel5)
                             .addComponent(jLabel6)
                             .addGroup(panelImage1Layout.createSequentialGroup()
                                 .addGap(47, 47, 47)
@@ -325,18 +284,17 @@ public class NuevoProveedor extends javax.swing.JDialog {
                         .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtTelefono, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtNombre)
-                            .addComponent(txtContacto)
                             .addComponent(txtCorreo)
                             .addComponent(jScrollPane1)
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelImage1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelImage1Layout.createSequentialGroup()
-                                .addComponent(cboTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtDocumento)))
+                                .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(cboTipoDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
         );
 
@@ -357,10 +315,6 @@ public class NuevoProveedor extends javax.swing.JDialog {
                 .addComponent(jLabel4)
                 .addGap(4, 4, 4)
                 .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtContacto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -435,7 +389,7 @@ public class NuevoProveedor extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCrearMouseExited
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
-        crearProveedor();           // TODO add your handling code here:
+        crearCliente();           // TODO add your handling code here:
     }//GEN-LAST:event_btnCrearActionPerformed
 
     private void btnCancelarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarMouseEntered
@@ -478,12 +432,6 @@ public class NuevoProveedor extends javax.swing.JDialog {
         validarCrear();        // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreKeyReleased
 
-    private void txtContactoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtContactoKeyReleased
-        String texto = txtContacto.getText().toUpperCase();
-        txtContacto.setText(texto);
-        validarCrear();        // TODO add your handling code here:
-    }//GEN-LAST:event_txtContactoKeyReleased
-
     private void txtCorreoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCorreoKeyReleased
         String texto = txtCorreo.getText().toUpperCase();
         txtCorreo.setText(texto);
@@ -507,14 +455,16 @@ public class NuevoProveedor extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NuevoProveedor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NuevoCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NuevoProveedor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NuevoCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NuevoProveedor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NuevoCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NuevoProveedor.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(NuevoCliente.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
@@ -522,7 +472,7 @@ public class NuevoProveedor extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                NuevoProveedor dialog = new NuevoProveedor(new javax.swing.JFrame(), true);
+                NuevoCliente dialog = new NuevoCliente(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -544,13 +494,11 @@ public class NuevoProveedor extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JScrollPane jScrollPane1;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private javax.swing.JPanel panelTop;
-    private javax.swing.JTextField txtContacto;
     private javax.swing.JTextField txtCorreo;
     private javax.swing.JTextArea txtDireccion;
     private javax.swing.JTextField txtDocumento;

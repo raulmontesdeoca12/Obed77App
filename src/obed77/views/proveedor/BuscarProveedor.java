@@ -201,7 +201,7 @@ public class BuscarProveedor extends javax.swing.JDialog {
 
             },
             new String [] {
-                "T.Doc", "Documento", "Nombre"
+                "Doc", "Número", "Nombre"
             }
         ) {
             Class[] types = new Class [] {
