@@ -5,14 +5,18 @@
  */
 package obed77.views.proveedor;
 
+import core.controlador.principal.ErroresMap;
+import core.controlador.session.ProveedorSession;
 import core.logger.LogService;
 import core.modelo.to.ProveedorTo;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Window;
+import java.util.ArrayList;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 import obed77.Principal;
 import obed77.views.dialogosComunes.JOptionDialog;
 
@@ -39,12 +43,12 @@ public class PanelProveedor extends javax.swing.JPanel {
     public static void cargar()
   {
     try {
-      tableModelProv = (javax.swing.table.DefaultTableModel)tablaProveedores.getModel();
+      tableModelProv = (DefaultTableModel)tablaProveedores.getModel();
       
       tableModelProv.setRowCount(0);
       Object[] fila = new Object[tableModelProv.getColumnCount()];
-      core.controlador.session.ProveedorSession provSession = new core.controlador.session.ProveedorSession();
-      java.util.ArrayList<ProveedorTo> lista = provSession.getProveedores();
+      ProveedorSession provSession = new ProveedorSession();
+      ArrayList<ProveedorTo> lista = provSession.getProveedores();
       for (ProveedorTo to : lista) {
         fila[0] = to.getTipoDocumento();
         fila[1] = to.getDocumento();
@@ -58,12 +62,11 @@ public class PanelProveedor extends javax.swing.JPanel {
       }
       filtro("");
     } catch (ClassNotFoundException ex) {
-      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+      LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
+      JOptionDialog.showMessageDialog(ErroresMap.MessageError(9999, ""), "Error", 2);
     } catch (java.sql.SQLException ex) {
-      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+      LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
+      JOptionDialog.showMessageDialog(ErroresMap.MessageError(9999, ""), "Error", 2);
     } finally {
       tablaProveedores.setModel(tableModelProv);
     }
@@ -112,16 +115,16 @@ public class PanelProveedor extends javax.swing.JPanel {
       to.setTipoDocumento(tipDoc);
       to.setDocumento(doc);
       to.setEstatus(estatus);
-      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
+      ProveedorSession session = new ProveedorSession();
       session.modificarEstatusProveedor(to);
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Inhabilitado Correctamente", "Proveedores", 2);
+      JOptionDialog.showMessageDialog("Proveedor Inhabilitado Correctamente", "Proveedores", 2);
       cargar();
     } catch (java.sql.SQLException ex) {
-      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
+      LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
+      JOptionDialog.showMessageDialog(ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
     } catch (Exception ex) {
-      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+      LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
+      JOptionDialog.showMessageDialog(ErroresMap.MessageError(9999, ""), "Error", 2);
     }
   }
   
@@ -136,21 +139,21 @@ public class PanelProveedor extends javax.swing.JPanel {
       to.setTipoDocumento(tipDoc);
       to.setDocumento(doc);
       to.setEstatus(estatus);
-      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
+      ProveedorSession session = new ProveedorSession();
       session.modificarEstatusProveedor(to);
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Habilitado Correctamente", "Proveedores", 2);
+      JOptionDialog.showMessageDialog("Proveedor Habilitado Correctamente", "Proveedores", 2);
       cargar();
     } catch (java.sql.SQLException ex) {
-      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
+      LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
+      JOptionDialog.showMessageDialog(ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
     } catch (Exception ex) {
-      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+      LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "Error");
+      JOptionDialog.showMessageDialog(ErroresMap.MessageError(9999, ""), "Error", 2);
     }
   }
   
   private static void filtro(String consulta) {
-    javax.swing.table.TableRowSorter<javax.swing.table.DefaultTableModel> tr = new javax.swing.table.TableRowSorter(tableModelProv);
+    TableRowSorter<DefaultTableModel> tr = new TableRowSorter(tableModelProv);
     tablaProveedores.setRowSorter(tr);
     tr.setRowFilter(javax.swing.RowFilter.regexFilter("(?i)" + consulta, new int[0]));
   }
@@ -712,6 +715,7 @@ public class PanelProveedor extends javax.swing.JPanel {
 
     private void btn_opc_restaurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_restaurarActionPerformed
         txtBuscar.setText("");
+        cargar();
         filtro(txtBuscar.getText());          // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_restaurarActionPerformed
 

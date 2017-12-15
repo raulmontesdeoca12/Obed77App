@@ -587,6 +587,7 @@ public class PanelCompras extends javax.swing.JPanel {
 
     private void btn_opc_restaurarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_restaurarActionPerformed
         txtBuscar.setText("");
+        cargar();
         filtro(txtBuscar.getText());          // TODO add your handling code here:
     }//GEN-LAST:event_btn_opc_restaurarActionPerformed
 
