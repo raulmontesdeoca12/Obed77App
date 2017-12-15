@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
 import javax.swing.border.Border;
+import obed77.views.compras.PanelCompras;
 import obed77.views.dialogosComunes.JOptionDialog;
 import obed77.views.producto.PanelCategoria;
 import obed77.views.producto.PanelProducto;
@@ -169,6 +170,20 @@ public class Principal extends javax.swing.JFrame {
         int index = multiPanel.indexOfTab(titulo);
         if (index == -1) {
             PanelProveedor panel = new PanelProveedor();
+            multiPanel.addTab(titulo, panel);
+            int i = multiPanel.indexOfTab(titulo);
+            multiPanel.setSelectedIndex(i);
+        } else {
+            JOptionDialog.showMessageDialog(this, "Ya existe una pestaña de \"" + titulo + "\" abierta", "Principal", JOptionDialog.INFORMACION_ICON);
+        }
+    }
+    
+     public void CrearPanelCompras() {
+        LogService.logger.info(getUsuarioPrincipal().getUser(), "doCrearPanelCompras");
+        String titulo = "   Compras   ";
+        int index = multiPanel.indexOfTab(titulo);
+        if (index == -1) {
+            PanelCompras panel = new PanelCompras();
             multiPanel.addTab(titulo, panel);
             int i = multiPanel.indexOfTab(titulo);
             multiPanel.setSelectedIndex(i);
@@ -1125,6 +1140,11 @@ public class Principal extends javax.swing.JFrame {
         menuListarCompras.setMaximumSize(null);
         menuListarCompras.setMinimumSize(new java.awt.Dimension(110, 25));
         menuListarCompras.setPreferredSize(new java.awt.Dimension(110, 25));
+        menuListarCompras.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuListarComprasActionPerformed(evt);
+            }
+        });
         menuCompras.add(menuListarCompras);
 
         menuAgregarCompra.setText("Registrar");
@@ -2165,6 +2185,10 @@ public class Principal extends javax.swing.JFrame {
     private void menuListarProveedoresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListarProveedoresActionPerformed
     CrearPanelProveedores();        // TODO add your handling code here:
     }//GEN-LAST:event_menuListarProveedoresActionPerformed
+
+    private void menuListarComprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuListarComprasActionPerformed
+CrearPanelCompras();        // TODO add your handling code here:
+    }//GEN-LAST:event_menuListarComprasActionPerformed
 
     /**
      * @param args the command line arguments

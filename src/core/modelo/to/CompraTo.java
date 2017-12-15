@@ -24,6 +24,8 @@ public class CompraTo {
     String documento;
     String referencia;
     int estatus;
+    double totalCompra;
+    
     ArrayList<DetalleCompraTo> detalles;
 
     public long getCod() {
@@ -97,6 +99,24 @@ public class CompraTo {
 
     public void setReferencia(String referencia) {
         this.referencia = referencia;
+    }
+
+    public double getTotalCompra() {
+        return totalCompra;
+    }
+
+    public void setTotalCompra(double totalCompra) {
+        this.totalCompra = totalCompra;
+    }
+
+    public double getTotalCompraByDetalles() {
+        double total = 0;
+        if(detalles!=null){
+            for(DetalleCompraTo to : detalles){
+                total = total +to.getSubTotal();
+            }    
+        }
+        return total;
     }
 
 

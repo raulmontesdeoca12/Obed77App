@@ -7,19 +7,20 @@ package obed77.views.compras;
 
 import core.controlador.principal.ErroresMap;
 import core.controlador.principal.Utilidades;
-import core.controlador.session.ProductoSession;
+import core.controlador.session.CompraSession;
 import core.logger.LogService;
-import core.modelo.to.CategoriaTo;
+import core.modelo.to.CompraTo;
 import core.modelo.to.DetalleCompraTo;
 import core.modelo.to.ProductoTo;
 import core.modelo.to.ProveedorTo;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import obed77.Principal;
 import obed77.views.dialogosComunes.JOptionDialog;
-import obed77.views.producto.*;
+import obed77.views.producto.AgregarProductoCompra;
 import obed77.views.proveedor.BuscarProveedor;
 
 
@@ -33,12 +34,14 @@ public class NuevaCompra extends javax.swing.JDialog {
     int x, y;
     static DefaultTableModel tableModelProdComp;
     public ProveedorTo proveedorSeleccionado;
+    AgregarProductoCompra bus;
 
     public NuevaCompra(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         tableModelProdComp = (DefaultTableModel) tablaProductosCompra.getModel();
         tablaProductosCompra.removeColumn(tablaProductosCompra.getColumn("det"));
+        bus = new AgregarProductoCompra(this, true);
 
         limpiar();
 
@@ -50,7 +53,6 @@ public class NuevaCompra extends javax.swing.JDialog {
         cboComprobante.setSelectedIndex(0);
         datFecha.setDate(null);
         txtReferencia.setText("");
-        txtImpuesto.setText("");
         txtProveedorNuevaCompra.setText("");
         btnCrear.setEnabled(false);
         proveedorSeleccionado = new ProveedorTo();
@@ -58,7 +60,7 @@ public class NuevaCompra extends javax.swing.JDialog {
 
     private void validarCrear() {
         if (txtProveedorNuevaCompra.getText().isEmpty() || datFecha.getDate() == null
-            || txtReferencia.getText().isEmpty() || txtImpuesto.getText().isEmpty()
+            || txtReferencia.getText().isEmpty()
             || tablaProductosCompra.getRowCount() <= 0 || proveedorSeleccionado == null) {
             btnCrear.setEnabled(false);
         } else {
@@ -66,24 +68,32 @@ public class NuevaCompra extends javax.swing.JDialog {
         }
     }
 
-    private void crearProducto() {
-        ProductoTo to = new ProductoTo();
+    private void crearCompra() {
+        CompraTo to = new CompraTo();
         try {
-            to.setCod(Long.parseLong(txtCodigo.getText()));
-            to.setNombre(txtNombre.getText());
-            to.setDescripcion(txtDescripcion.getText());
-            to.setCategoria(((CategoriaTo) cboCategorias.getSelectedItem()).getId());
-            ProductoSession session = new ProductoSession();
-            session.insertarProducto(to);
-            JOptionDialog.showMessageDialog(this, "Producto creado correctamente", "Productos", JOptionDialog.INFORMACION_ICON);
-            PanelProducto.cargar();
+            to.setProveedor(proveedorSeleccionado);
+            to.setFecha(datFecha.getDate());
+            to.setDocumento(cboComprobante.getSelectedItem().toString());
+            to.setReferencia(txtReferencia.getText());
+            ArrayList<DetalleCompraTo> listDet = new ArrayList<>();
+            
+            for(int i = 0; i<tablaProductosCompra.getRowCount(); i++){
+                DetalleCompraTo det = (DetalleCompraTo) tablaProductosCompra.getModel().getValueAt(i, 5);
+                listDet.add(det);
+            }
+            to.setDetalles(listDet);
+            to.setUsuario(Principal.getUsuarioPrincipal().getUser());
+            CompraSession session = new CompraSession();
+            session.insertarCompra(to);
+            JOptionDialog.showMessageDialog(this, "Compra creada correctamente", "Compras", JOptionDialog.INFORMACION_ICON);
+            PanelCompras.cargar();
             this.dispose();
         } catch (SQLException ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR");
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), to.getNombre()), "Productos", JOptionDialog.INFORMACION_ICON);
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(ex.getErrorCode(), to.getProveedor().toString()), "Compras", JOptionDialog.INFORMACION_ICON);
         } catch (Exception ex) {
             LogService.logger.error(Principal.getUsuarioPrincipal().getUser(), "ERROR: " + ex.getMessage());
-            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, null), "Productos", JOptionDialog.INFORMACION_ICON);
+            JOptionDialog.showMessageDialog(this, ErroresMap.MessageError(9999, ex.getMessage()), "Productos", JOptionDialog.INFORMACION_ICON);
         }
     }
 
@@ -97,22 +107,46 @@ public class NuevaCompra extends javax.swing.JDialog {
     }
     
     private void agregarProducto() {
-        AgregarProductoCompra bus = new AgregarProductoCompra(this, true);
+        
         bus.setVisible(true);
         DetalleCompraTo det = bus.getDetalle();
         Object[] fila = new Object[tableModelProdComp.getColumnCount()];
         if(det != null){
-            fila[0] = det.getProducto();
-            fila[1] = det.getCantidad();
-            fila[2] = det.getCosto();
-            fila[3] = det.getPrecio();
-            fila[4] = det.getSubTotal();
-            fila[5] = det;
-            tableModelProdComp.addColumn(fila);
+            if(!containProduct(det.getProducto())){
+                fila[0] = det.getProducto();
+                fila[1] = det.getCantidad();
+                fila[2] = det.getCosto();
+                fila[3] = det.getPrecio();
+                fila[4] = det.getSubTotal();
+                fila[5] = det;
+                tableModelProdComp.addRow(fila);
+                LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Agregando producto");
+                calcularTotal();
+                validarCrear();
+            }else{
+                 JOptionDialog.showMessageDialog(this, "El producto ya está seleccionado", "Compras", JOptionDialog.INFORMACION_ICON);
+            }
         }
     }
     
     private void calcularTotal(){
+        double total = 0;
+        for(int i = 0; i<tablaProductosCompra.getRowCount(); i++){
+            double sub = Double.parseDouble(tablaProductosCompra.getValueAt(i, 4).toString());
+            total = total+sub;
+        }
+        txtTotal.setText(total+"");
+    }
+    
+    private boolean containProduct(ProductoTo producto){
+        boolean res = false;
+        for(int i = 0; i<tablaProductosCompra.getRowCount(); i++){
+            ProductoTo prod = (ProductoTo) tablaProductosCompra.getValueAt(i, 0);
+            if (prod.equals(producto)) {
+                res=true ;
+            }
+        }
+        return res;
     }
     
 
@@ -136,7 +170,6 @@ public class NuevaCompra extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaProductosCompra = new javax.swing.JTable();
@@ -147,7 +180,6 @@ public class NuevaCompra extends javax.swing.JDialog {
         datFecha = new com.toedter.calendar.JDateChooser();
         cboComprobante = new javax.swing.JComboBox<>();
         txtReferencia = new javax.swing.JTextField();
-        txtImpuesto = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JTextField();
 
@@ -277,10 +309,6 @@ public class NuevaCompra extends javax.swing.JDialog {
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel8.setText("Referencia de Comprobante");
 
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel9.setText("Impuesto");
-
         jLabel10.setForeground(new java.awt.Color(255, 255, 255));
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel10.setText("Productos");
@@ -325,7 +353,7 @@ public class NuevaCompra extends javax.swing.JDialog {
         jScrollPane1.setViewportView(tablaProductosCompra);
         if (tablaProductosCompra.getColumnModel().getColumnCount() > 0) {
             tablaProductosCompra.getColumnModel().getColumn(0).setMinWidth(120);
-            tablaProductosCompra.getColumnModel().getColumn(1).setMaxWidth(55);
+            tablaProductosCompra.getColumnModel().getColumn(1).setMaxWidth(65);
             tablaProductosCompra.getColumnModel().getColumn(2).setMinWidth(50);
             tablaProductosCompra.getColumnModel().getColumn(3).setMinWidth(50);
             tablaProductosCompra.getColumnModel().getColumn(4).setMinWidth(50);
@@ -401,13 +429,30 @@ public class NuevaCompra extends javax.swing.JDialog {
         });
 
         datFecha.setOpaque(false);
+        datFecha.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                datFechaPropertyChange(evt);
+            }
+        });
 
-        cboComprobante.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Boleta", "Factura", "Ticket" }));
+        cboComprobante.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BOLETA", "FACTURA", "TICKET" }));
+        cboComprobante.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboComprobanteItemStateChanged(evt);
+            }
+        });
+
+        txtReferencia.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtReferenciaKeyReleased(evt);
+            }
+        });
 
         jLabel11.setForeground(new java.awt.Color(255, 255, 255));
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel11.setText("Total S/.: ");
 
+        txtTotal.setText("0.0");
         txtTotal.setFocusable(false);
 
         javax.swing.GroupLayout panelImage1Layout = new javax.swing.GroupLayout(panelImage1);
@@ -440,13 +485,8 @@ public class NuevaCompra extends javax.swing.JDialog {
                                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(panelImage1Layout.createSequentialGroup()
                                         .addComponent(jLabel8)
-                                        .addGap(235, 235, 235)
-                                        .addComponent(jLabel9))
-                                    .addGroup(panelImage1Layout.createSequentialGroup()
-                                        .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, 397, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtImpuesto, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 5, Short.MAX_VALUE)))
+                                        .addGap(0, 370, Short.MAX_VALUE))
+                                    .addComponent(txtReferencia))))
                         .addContainerGap())
                     .addGroup(panelImage1Layout.createSequentialGroup()
                         .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -492,13 +532,11 @@ public class NuevaCompra extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel9))
+                    .addComponent(jLabel8))
                 .addGap(7, 7, 7)
                 .addGroup(panelImage1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cboComprobante, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtImpuesto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtReferencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel10)
                 .addGap(8, 8, 8)
@@ -576,7 +614,7 @@ public class NuevaCompra extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCrearMouseExited
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
-        crearProducto();           // TODO add your handling code here:
+        crearCompra();           // TODO add your handling code here:
     }//GEN-LAST:event_btnCrearActionPerformed
 
     private void btnCancelarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCancelarMouseEntered
@@ -623,7 +661,8 @@ btnAgregar.setBackground(Utilidades.getColorNormalMenu());         // TODO add y
     }//GEN-LAST:event_btnAgregarMouseExited
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        // TODO add your handling code here:
+    btnAgregar.setBackground(Utilidades.getColorNormalMenu());   
+        agregarProducto();        // TODO add your handling code here:
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnQuitarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnQuitarMouseEntered
@@ -635,7 +674,14 @@ btnQuitar.setBackground(Utilidades.getColorNormalMenu());         // TODO add yo
     }//GEN-LAST:event_btnQuitarMouseExited
 
     private void btnQuitarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnQuitarActionPerformed
-        // TODO add your handling code here:
+  btnQuitar.setBackground(Utilidades.getColorNormalMenu()); 
+  if(tablaProductosCompra.getSelectedRow()!=-1){
+      LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Quitando Producto");
+      tableModelProdComp.removeRow(tablaProductosCompra.getSelectedRow());
+      calcularTotal();
+  }
+  
+  // TODO add your handling code here:
     }//GEN-LAST:event_btnQuitarActionPerformed
 
     private void btnLimpiarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLimpiarMouseEntered
@@ -647,9 +693,23 @@ btnLimpiar.setBackground(Utilidades.getColorEntered());        // TODO add your 
     }//GEN-LAST:event_btnLimpiarMouseExited
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        LogService.logger.info(Principal.getUsuarioPrincipal().getUser(), "Limpiando Tabla"); 
+        btnLimpiar.setBackground(Utilidades.getColorNormalMenu()); 
         tableModelProdComp.setRowCount(0);
-        tablaProductosCompra.setModel(tableModelProdComp);// TODO add your handling code here:
+        calcularTotal();// TODO add your handling code here:
     }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void datFechaPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_datFechaPropertyChange
+        validarCrear();        // TODO add your handling code here:
+    }//GEN-LAST:event_datFechaPropertyChange
+
+    private void cboComprobanteItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboComprobanteItemStateChanged
+validarCrear();        // TODO add your handling code here:
+    }//GEN-LAST:event_cboComprobanteItemStateChanged
+
+    private void txtReferenciaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtReferenciaKeyReleased
+validarCrear();        // TODO add your handling code here:
+    }//GEN-LAST:event_txtReferenciaKeyReleased
 
     /**
      * @param args the command line arguments
@@ -718,12 +778,10 @@ btnLimpiar.setBackground(Utilidades.getColorEntered());        // TODO add your 
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private org.edisoncor.gui.panel.PanelImage panelImage1;
     private javax.swing.JPanel panelTop;
     public static javax.swing.JTable tablaProductosCompra;
-    private javax.swing.JTextField txtImpuesto;
     private javax.swing.JTextField txtProveedorNuevaCompra;
     private javax.swing.JTextField txtReferencia;
     private javax.swing.JTextField txtTotal;

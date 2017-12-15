@@ -528,6 +528,7 @@ public class AgregarProductoCompra extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelarMouseEntered
 
     private void btnCrearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearActionPerformed
+        btnCrear.setBackground(Utilidades.getColorNormalMenu());
         ProductoTo producto = (ProductoTo) tablaBuscarProducto.getValueAt(tablaBuscarProducto.getSelectedRow(), 1);
         int cantidad = Integer.parseInt(txtCantidad.getText());
         double costo = Double.parseDouble(txtCosto.getText());

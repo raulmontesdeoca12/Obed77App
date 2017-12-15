@@ -105,4 +105,31 @@ public class ProductoTo {
     public String toString(){
         return this.nombre;
     }
+    
+    
+     @Override
+    public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProductoTo)) {
+            return false;
+        }
+        ProductoTo producto = (ProductoTo) o;
+        if (cod != producto.cod) {
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (this.nombre != null ? this.nombre.hashCode() : 0);
+        hash = (int) (89 * hash + this.cod);
+        return hash;
+    }
 }

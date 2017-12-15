@@ -5,18 +5,16 @@
  */
 package obed77.views.compras;
 
+import core.controlador.session.CompraSession;
 import core.logger.LogService;
-import core.modelo.to.ProveedorTo;
+import core.modelo.to.CompraTo;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Window;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import obed77.Principal;
 import obed77.views.dialogosComunes.JOptionDialog;
-import obed77.views.proveedor.*;
-
 
 
 /**
@@ -34,7 +32,6 @@ public class PanelCompras extends javax.swing.JPanel {
         jScrollPane1.getViewport().setOpaque(false);
         cargar();
         inhabilitarBotones();
-        tablaCompras.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
     }
 
     public static void cargar()
@@ -44,16 +41,16 @@ public class PanelCompras extends javax.swing.JPanel {
       
       tableModelProv.setRowCount(0);
       Object[] fila = new Object[tableModelProv.getColumnCount()];
-      core.controlador.session.ProveedorSession provSession = new core.controlador.session.ProveedorSession();
-      java.util.ArrayList<ProveedorTo> lista = provSession.getProveedores();
-      for (ProveedorTo to : lista) {
-        fila[0] = to.getTipoDocumento();
-        fila[1] = to.getDocumento();
-        fila[2] = to.getNombre();
-        fila[3] = to.getContacto();
-        fila[4] = to.getTelefono();
-        fila[5] = to.getCorreo();
-        fila[6] = to.getDireccion();
+      CompraSession compSession = new CompraSession();
+      java.util.ArrayList<CompraTo> lista = compSession.getCompras();
+      for (CompraTo to : lista) {
+        fila[0] = to.getCod();
+        fila[1] = to.getFecha();
+        fila[2] = to.getProveedor();
+        fila[3] = to.getUsuario();
+        fila[4] = to.getDocumento();
+        fila[5] = to.getReferencia();
+        fila[6] = to.getTotalCompra();
         fila[7] = to.getEstatusString();
         tableModelProv.addRow(fila);
       }
@@ -87,7 +84,7 @@ public class PanelCompras extends javax.swing.JPanel {
     int fsel = tablaCompras.getSelectedRow();
     if (fsel != -1) {
       String estatus = tablaCompras.getValueAt(fsel, 7).toString();
-      ProveedorTo cat = new ProveedorTo();
+      CompraTo cat = new CompraTo();
       cat.setEstatusString(estatus);
       btnDetalles.setEnabled(true);
       btn_opc_anular.setEnabled(cat.getEstatus() == 1);
@@ -99,53 +96,26 @@ public class PanelCompras extends javax.swing.JPanel {
   
 
 
-  private void inhabilitarProveedor()
+  private void anularCompra()
   {
     int fsel = tablaCompras.getSelectedRow();
-    String tipDoc = tablaCompras.getValueAt(fsel, 0).toString();
-    String doc = tablaCompras.getValueAt(fsel, 1).toString();
-    String nombre = tablaCompras.getValueAt(fsel, 2).toString();
+    long cod = Long.parseLong(tablaCompras.getValueAt(fsel, 0).toString());
     try {
-      int estatus = 0;
-      ProveedorTo to = new ProveedorTo();
-      to.setTipoDocumento(tipDoc);
-      to.setDocumento(doc);
-      to.setEstatus(estatus);
-      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
-      session.modificarEstatusProveedor(to);
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Inhabilitado Correctamente", "Proveedores", 2);
+     
+      CompraSession session = new CompraSession();
+      session.anularCompra(cod);
+      JOptionDialog.showMessageDialog("Compra Anulada Correctamente", "Compras", 2);
       cargar();
     } catch (java.sql.SQLException ex) {
       core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(ex.getErrorCode(), cod+""), "Error", 2);
     } catch (Exception ex) {
       core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
+      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999,""), "Error", 2);
     }
   }
   
-  private void habilitarProveedor() {
-    int fsel = tablaCompras.getSelectedRow();
-    String tipDoc = tablaCompras.getValueAt(fsel, 0).toString();
-    String doc = tablaCompras.getValueAt(fsel, 1).toString();
-    String nombre = tablaCompras.getValueAt(fsel, 2).toString();
-    try {
-      int estatus = 1;
-      ProveedorTo to = new ProveedorTo();
-      to.setTipoDocumento(tipDoc);
-      to.setDocumento(doc);
-      to.setEstatus(estatus);
-      core.controlador.session.ProveedorSession session = new core.controlador.session.ProveedorSession();
-      session.modificarEstatusProveedor(to);
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog("Proveedor Habilitado Correctamente", "Proveedores", 2);
-      cargar();
-    } catch (java.sql.SQLException ex) {
-      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(ex.getErrorCode(), nombre), "Error", 2);
-    } catch (Exception ex) {
-      core.logger.LogService.logger.error(obed77.Principal.getUsuarioPrincipal().getUser(), "Error");
-      obed77.views.dialogosComunes.JOptionDialog.showMessageDialog(core.controlador.principal.ErroresMap.MessageError(9999, ""), "Error", 2);
-    }
+  private void verDetalles(){
   }
   
   private static void filtro(String consulta) {
@@ -214,7 +184,7 @@ public class PanelCompras extends javax.swing.JPanel {
 
         btn_opc_anular.setFont(new java.awt.Font("sansserif", 1, 12)); // NOI18N
         btn_opc_anular.setForeground(new java.awt.Color(255, 255, 255));
-        btn_opc_anular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_deshabilitar.png"))); // NOI18N
+        btn_opc_anular.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono_anular_40.png"))); // NOI18N
         btn_opc_anular.setText("Anular");
         btn_opc_anular.setToolTipText("Inhabilitar el producto");
         btn_opc_anular.setBorderPainted(false);
@@ -534,7 +504,7 @@ public class PanelCompras extends javax.swing.JPanel {
     private void btn_opc_nuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_nuevoActionPerformed
         btn_opc_nuevo.setOpaque(false);
         Window parentWindow = SwingUtilities.windowForComponent(this);
-        NuevoProveedor nuevo = new NuevoProveedor((Frame) parentWindow, true);
+        NuevaCompra nuevo = new NuevaCompra((Frame) parentWindow, true);
         nuevo.setVisible(true);
         inhabilitarBotones();
         // TODO add your handling code here:
@@ -565,9 +535,9 @@ public class PanelCompras extends javax.swing.JPanel {
 
     private void btn_opc_anularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_opc_anularActionPerformed
         btn_opc_anular.setOpaque(false);
-        int opc = JOptionDialog.showConfirmDialog("¿Desea inhabilitar el proveedor '" + tablaCompras.getValueAt(tablaCompras.getSelectedRow(), 1).toString() + "'?", "Inhabilitar Proveedor", JOptionDialog.SI_NO_OPTION);
+        int opc = JOptionDialog.showConfirmDialog("¿Desea anular esta compra?", "Inhabilitar Proveedor", JOptionDialog.SI_NO_OPTION);
         if (opc == 0) {
-            inhabilitarProveedor();
+            anularCompra();
         }
         inhabilitarBotones();
         // TODO add your handling code here:
@@ -651,7 +621,11 @@ public class PanelCompras extends javax.swing.JPanel {
     }//GEN-LAST:event_btnDetallesMouseReleased
 
     private void btnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetallesActionPerformed
-        // TODO add your handling code here:
+        btnDetalles.setOpaque(false);
+        Window parentWindow = SwingUtilities.windowForComponent(this);
+        DetallesCompra nuevo = new DetallesCompra((Frame) parentWindow, true);
+        nuevo.setVisible(true);
+        inhabilitarBotones();
     }//GEN-LAST:event_btnDetallesActionPerformed
 
 
